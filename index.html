@@ -348,7 +348,6 @@ body{
            <button onclick="openDailyPlan()">Daily Plan</button>
           <button onclick="showPage('plansPage')">Tests</button>
           <button onclick="openPerformancePage()">Performance</button>
-          <button onclick="openAdminPage()">Admin</button>
         </div>
       </nav>
       <div class="hero-content">
@@ -395,7 +394,7 @@ body{
     </div>
     <div id="studentPaymentStatus" class="dashboard-card" style="display:none;margin-top:22px">
       <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
-        <div><h3 style="margin:0">Payment Status</h3><p class="muted" style="margin:5px 0 0">Track your package payment and approval here.</p></div>
+        <div><h3 style="margin:0">Payment Status</h3><p class="muted" style="margin:5px 0 0">Track your package payment and approval here. Approval or rejection is also sent to your account email.</p></div>
         <button class="back-btn" type="button" onclick="refreshStudentPaymentStatus()">Refresh status</button>
       </div>
       <div class="payment-table-wrap" style="margin-top:16px;overflow-x:auto">
@@ -803,44 +802,6 @@ body{
         </form>
         <div id="commentStatus" class="notice" style="display:none;margin-top:14px"></div>
         <div id="publicComments" class="comment-list" style="margin-top:18px"></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ADMIN PAYMENT VERIFICATION -->
-<section id="adminPage" class="page">
-  <div class="container">
-    <div class="page-header">
-      <button class="back-btn" onclick="showPage('homePage')">← Home</button>
-      <h2>Admin Payment Verification</h2>
-      <p>Review bank-transfer confirmations and approve packages after checking your Opay account.</p>
-    </div>
-    <div id="adminLoginBox" class="panel">
-      <h3>Admin sign in</h3>
-      <p>Enter your admin password to view payment confirmations.</p>
-      <input id="adminPassword" type="password" placeholder="Admin password" style="width:100%;max-width:420px;padding:13px;border:1px solid var(--line);border-radius:10px">
-      <p id="adminError" style="color:var(--danger);font-weight:700"></p>
-      <button class="primary" onclick="adminLogin()">Sign In</button>
-    </div>
-    <div id="adminDashboard" style="display:none">
-      <div class="stats">
-        <div class="stat"><strong id="adminPendingCount">0</strong><span>Pending payments</span></div>
-        <div class="stat"><strong id="adminApprovedCount">0</strong><span>Approved payments</span></div>
-      </div>
-      <div class="panel">
-        <div style="display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap">
-          <h3 style="margin:0">Payment requests</h3>
-          <button class="back-btn" onclick="loadAdminPayments()">Refresh</button>
-        </div>
-        <div id="adminPaymentsList" style="margin-top:18px"></div>
-      </div>
-      <div class="panel">
-        <div style="display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap">
-          <h3 style="margin:0">Student comments</h3>
-          <button class="back-btn" onclick="loadAdminComments()">Refresh</button>
-        </div>
-        <div id="adminCommentsList" style="margin-top:18px"></div>
       </div>
     </div>
   </div>
@@ -2268,10 +2229,27 @@ async function refreshStudentPaymentStatus(){
       if(data.ok && Array.isArray(data.payments)) online=data.payments;
     }catch(e){ console.warn("Could not check payment status:",e); }
   }
-  const byId={};
-  local.forEach(p=>byId[p.id]=p);
-  online.forEach(p=>byId[p.id]=p);
-  const payments=Object.values(byId).sort((a,b)=>new Date(b.submittedAt||0)-new Date(a.submittedAt||0));
+  // The online Payments sheet is the source of truth. This means a payment
+  // remains PENDING, APPROVED, or REJECTED after the candidate leaves the
+  // website and returns later. Local storage is only a fallback when the
+  // online service cannot be reached.
+  let payments=[];
+  if(online.length){
+    payments=online;
+    // Keep the latest online status locally too, so the status survives a
+    // temporary connection problem on the same device.
+    try{
+      const saved=JSON.parse(localStorage.getItem("oralEnglishPendingBankTransfers")||"[]");
+      const onlineById={};
+      online.forEach(p=>onlineById[p.id]=p);
+      const merged=saved.map(p=>onlineById[p.id]||p);
+      online.forEach(p=>{ if(!merged.some(x=>x.id===p.id)) merged.push(p); });
+      localStorage.setItem("oralEnglishPendingBankTransfers",JSON.stringify(merged));
+    }catch(e){}
+  }else{
+    payments=local;
+  }
+  payments=payments.sort((a,b)=>new Date(b.submittedAt||0)-new Date(a.submittedAt||0));
   if(!payments.length){ list.innerHTML='<tr><td colspan="4" style="padding:18px;text-align:center" class="performance-empty">No payment confirmations have been submitted yet.</td></tr>'; return; }
   list.innerHTML=payments.map(p=>{
     const status=String(p.status||"pending").toLowerCase();
@@ -2316,70 +2294,8 @@ function confirmBankTransfer(){
   }
   closeBankTransferModal();
   refreshStudentPaymentStatus();
-  alert("Transfer confirmation submitted. Your payment status is now PENDING until the transfer is verified.");
+  alert("Transfer confirmation submitted. Your payment is now PENDING. You will receive an approval or rejection email after verification.");
 }
-
-let adminLoggedIn=false;
-function openAdminPage(){
-  showPage("adminPage");
-  if(adminLoggedIn){ loadAdminPayments(); loadAdminComments(); }
-}
-function adminLogin(){
-  const password=document.getElementById("adminPassword").value;
-  if(!password){document.getElementById("adminError").textContent="Enter the admin password.";return;}
-  if(PAYMENT_API_URL.includes("PASTE_YOUR_")){
-    document.getElementById("adminError").textContent="Connect the Google Apps Script Web App URL first.";return;
-  }
-  // The actual password check is performed by the backend; the browser does not store it.
-  fetch(PAYMENT_API_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action:"adminLogin",password})})
-    .then(r=>r.json()).then(data=>{
-      if(!data.ok){document.getElementById("adminError").textContent=data.error||"Admin sign in failed.";return;}
-      adminLoggedIn=true;
-      sessionStorage.setItem("oralEnglishAdminToken",data.token);
-      document.getElementById("adminLoginBox").style.display="none";
-      document.getElementById("adminDashboard").style.display="block";
-      loadAdminPayments();
-      loadAdminComments();
-    }).catch(()=>{document.getElementById("adminError").textContent="Could not connect to the payment server.";});
-}
-function loadAdminPayments(){
-  const token=sessionStorage.getItem("oralEnglishAdminToken");
-  if(!token)return;
-  const list=document.getElementById("adminPaymentsList");
-  list.innerHTML="Loading payment requests…";
-  fetch(PAYMENT_API_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action:"listPayments",token})})
-    .then(r=>r.json()).then(data=>{
-      if(!data.ok){list.innerHTML='<div class="notice">'+(data.error||"Unable to load payments.")+'</div>';return;}
-      const pending=data.payments.filter(p=>p.status==="pending");
-      const approved=data.payments.filter(p=>p.status==="approved");
-      document.getElementById("adminPendingCount").textContent=pending.length;
-      document.getElementById("adminApprovedCount").textContent=approved.length;
-      if(!data.payments.length){list.innerHTML='<div class="performance-empty">No payment requests yet.</div>';return;}
-      list.innerHTML=data.payments.map(p=>{
-        const safeName=String(p.candidateName||"Candidate").replace(/[<>&]/g,m=>({"<":"&lt;",">":"&gt;","&":"&amp;"}[m]));
-        const safeEmail=String(p.email||"").replace(/[<>&]/g,m=>({"<":"&lt;",">":"&gt;","&":"&amp;"}[m]));
-        const safePkg=String(p.packageName||"").replace(/[<>&]/g,m=>({"<":"&lt;",">":"&gt;","&":"&amp;"}[m]));
-        const date=p.submittedAt?new Date(p.submittedAt).toLocaleString():"";
-        return `<div class="panel" style="margin-top:14px"><strong>${safeName}</strong><br><span class="muted">${safeEmail}</span><p><strong>${safePkg}</strong> — ${p.amount||""}<br><small>Submitted: ${date}<br>Reference: ${p.id||""}</small></p><span class="badge">${String(p.status||"pending").toUpperCase()}</span>${p.status==="pending"?`<div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px"><button class="primary" onclick="approvePayment('${String(p.id).replace(/'/g,"\'")}')">Approve & Unlock</button><button class="back-btn" onclick="rejectPayment('${String(p.id).replace(/'/g,"\'")}')">Reject</button></div>`:""}</div>`;
-      }).join("");
-    }).catch(()=>{list.innerHTML='<div class="notice">Could not connect to the payment server.</div>';});
-}
-function approvePayment(id){
-  const token=sessionStorage.getItem("oralEnglishAdminToken");
-  if(!token)return;
-  if(!confirm("Confirm that you have received this exact payment in Opay and approve this package?"))return;
-  fetch(PAYMENT_API_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action:"approvePayment",token,id})})
-    .then(r=>r.json()).then(data=>{alert(data.ok?"Payment approved and package unlocked.":(data.error||"Approval failed."));if(data.ok)loadAdminPayments();}).catch(()=>alert("Could not connect to the payment server."));
-}
-function rejectPayment(id){
-  const token=sessionStorage.getItem("oralEnglishAdminToken");
-  if(!token)return;
-  if(!confirm("Reject this payment request?"))return;
-  fetch(PAYMENT_API_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action:"rejectPayment",token,id})})
-    .then(r=>r.json()).then(data=>{alert(data.ok?"Payment request rejected.":(data.error||"Rejection failed."));if(data.ok)loadAdminPayments();}).catch(()=>alert("Could not connect to the payment server."));
-}
-
-
 
 async function submitContactMessage(event){
   event.preventDefault();
@@ -2430,15 +2346,6 @@ async function loadHomePublicComments(){
   try{const r=await fetch(PAYMENT_API_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action:"listComments"})}); const data=await r.json();
     if(data.ok) homeBox.innerHTML=data.comments.slice(0,20).map(c=>`<div class="comment-item"><strong>${escapeHtml(c.name||"Student")}</strong><br><small>${c.createdAt?new Date(c.createdAt).toLocaleString():""}</small><p style="margin-bottom:0;line-height:1.6">${escapeHtml(c.comment||"")}</p></div>`).join("");
   }catch(e){}
-}
-
-async function loadAdminComments(){
-  const token=sessionStorage.getItem("oralEnglishAdminToken"), box=document.getElementById("adminCommentsList"); if(!token||!box)return;
-  box.textContent="Loading comments…";
-  try{const r=await fetch(PAYMENT_API_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action:"listComments",token})}); const data=await r.json();
-    if(!data.ok){box.innerHTML='<div class="notice">'+escapeHtml(data.error||"Unable to load comments.")+'</div>';return;}
-    box.innerHTML=data.comments.length?data.comments.map(c=>`<div class="comment-item"><strong>${escapeHtml(c.name||"Student")}</strong> <small>${escapeHtml(c.email||"")}</small><br><small>${c.createdAt?new Date(c.createdAt).toLocaleString():""}</small><p>${escapeHtml(c.comment||"")}</p></div>`).join(""): '<div class="performance-empty">No comments yet.</div>';
-  }catch(e){box.innerHTML='<div class="notice">Could not connect to the academy service.</div>';}
 }
 
 function startPackagePayment(type,key){ openBankTransferModal(type,key); return false; }
