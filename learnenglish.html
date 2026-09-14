@@ -1,0 +1,2584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Oral English Academy</title>
+<style>
+:root{
+  --navy:#10233f; --blue:#2457d6; --gold:#d6a84f; --cream:#f7f8fc;
+  --white:#fff; --text:#182235; --muted:#687386; --line:#e5e9f2;
+  --success:#1d8b5a; --danger:#c83b4a; --shadow:0 18px 50px rgba(16,35,63,.10);
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;background:var(--cream);color:var(--text)}
+button{font:inherit;cursor:pointer}
+.page{display:none;min-height:100vh}
+.page.active{display:block}
+.container{width:min(1120px,92%);margin:auto}
+.nav{height:72px;display:flex;align-items:center;justify-content:space-between}
+.brand{font-weight:800;font-size:20px;color:var(--navy);letter-spacing:-.4px}
+.brand span{color:var(--gold)}
+.nav-links{display:flex;gap:10px}
+.nav-links button{background:none;border:0;color:var(--muted);font-weight:600;padding:10px 14px}
+.hero{position:relative;overflow:hidden;background:linear-gradient(135deg,#10233f 0%,#1d4074 58%,#2457d6 100%);color:white;border-radius:0 0 42px 42px}
+.hero:before,.hero:after{content:"";position:absolute;border-radius:50%;border:1px solid rgba(255,255,255,.12)}
+.hero:before{width:380px;height:380px;right:-130px;top:-160px}
+.hero:after{width:250px;height:250px;left:-110px;bottom:-150px}
+.hero-content{padding:70px 0 78px;position:relative;z-index:1;max-width:800px}
+.eyebrow{display:inline-flex;padding:8px 13px;border:1px solid rgba(255,255,255,.22);border-radius:99px;background:rgba(255,255,255,.08);font-size:13px;font-weight:700;letter-spacing:.5px}
+h1{font-size:clamp(42px,7vw,76px);line-height:.98;margin:20px 0 18px;letter-spacing:-3px}
+.hero p{font-size:18px;line-height:1.7;color:#dbe6f6;max-width:690px}
+.primary,.secondary,.back-btn,.next-btn,.danger-btn{
+  border:0;border-radius:14px;padding:14px 20px;font-weight:800;transition:.2s
+}
+.primary{background:var(--gold);color:#17243a;box-shadow:0 10px 25px rgba(0,0,0,.15)}
+.primary:hover,.secondary:hover,.back-btn:hover,.next-btn:hover{transform:translateY(-2px)}
+.secondary{background:white;color:var(--navy)}
+.back-btn{background:#eef1f7;color:var(--navy)}
+.next-btn{background:var(--blue);color:white}
+.danger-btn{background:var(--danger);color:white}
+.hero-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:28px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:28px}
+.stat{padding:18px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.08);border-radius:18px}
+.stat strong{display:block;font-size:22px}.stat span{font-size:12px;color:#c9d6e9}
+.section{padding:55px 0}.section-title{margin-bottom:24px}.section-title h2{margin:0 0 8px;font-size:32px}.section-title p{margin:0;color:var(--muted)}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.card{background:white;border:1px solid var(--line);border-radius:22px;padding:24px;box-shadow:var(--shadow)}
+.card h3{margin:0 0 9px}.card p{color:var(--muted);line-height:1.6}.icon{font-size:30px;margin-bottom:12px}
+.page-header{padding:34px 0 12px}.page-header h2{font-size:34px;margin:0 0 7px}.page-header p{color:var(--muted)}
+.panel{background:white;border:1px solid var(--line);border-radius:24px;padding:28px;box-shadow:var(--shadow);margin:20px 0}
+.plan-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}.plan{position:relative}.plan .price{font-size:28px;font-weight:900;color:var(--navy);margin:12px 0}.plan ul{padding-left:20px;color:var(--muted);line-height:1.8}.plan.selected{border:2px solid var(--blue)}.badge{position:absolute;right:14px;top:14px;background:#edf2ff;color:var(--blue);padding:5px 9px;border-radius:99px;font-size:11px;font-weight:800}
+.choice-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.choice{padding:18px;border:2px solid var(--line);background:white;border-radius:18px;text-align:left}.choice.selected{border-color:var(--blue);background:#f3f6ff}.choice strong{display:block;margin-bottom:5px}.choice small{color:var(--muted)}
+label{display:block;font-weight:700;margin:14px 0 7px}input,select{width:100%;padding:14px;border:1px solid #d9deea;border-radius:12px;font-size:16px;outline:none}input:focus{border-color:var(--blue);box-shadow:0 0 0 3px #eaf0ff}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.lesson-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.lesson{cursor:pointer}.lesson h3{margin-top:0}.lesson .tag{display:inline-block;padding:5px 9px;border-radius:99px;background:#f0f3f9;color:var(--muted);font-size:11px;font-weight:800}
+.lesson-body{display:none}.lesson.open .lesson-body{display:block}.lesson-body p,.lesson-body li{color:var(--muted);line-height:1.65}
+.quiz-top{position:sticky;top:0;z-index:5;background:rgba(247,248,252,.96);backdrop-filter:blur(8px);padding:12px 0;border-bottom:1px solid var(--line)}
+.quiz-bar{display:flex;justify-content:space-between;align-items:center;gap:15px}.timer{font-size:25px;font-weight:900;color:var(--navy);background:white;border:1px solid var(--line);padding:9px 15px;border-radius:13px}.timer.warning{color:var(--danger)}
+.progress{height:8px;background:#e8ecf4;border-radius:99px;overflow:hidden;margin-top:10px}.progress>div{height:100%;background:var(--blue);width:0}
+.question{background:white;border:1px solid var(--line);border-radius:24px;padding:28px;box-shadow:var(--shadow);margin:22px 0}.section-label{font-size:12px;font-weight:900;color:var(--blue);text-transform:uppercase;letter-spacing:1px}.question h3{font-size:22px;line-height:1.45}.options{display:grid;gap:10px}.option{display:flex;gap:12px;align-items:flex-start;border:1px solid var(--line);padding:15px;border-radius:14px}.option:hover{background:#f7f9fd}.option input{width:auto;margin-top:4px}
+.quiz-nav{display:flex;justify-content:space-between;gap:12px;margin:18px 0 40px}.quiz-nav button{min-width:130px}
+.result-score{font-size:58px;font-weight:950;color:var(--navy)}.pass{color:var(--success)}.fail{color:var(--danger)}
+.area-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}.area{border:1px solid var(--line);border-radius:18px;padding:18px}.area strong{display:block;margin-bottom:7px}.area small{color:var(--muted)}
+.review-item{border:1px solid var(--line);border-radius:16px;padding:16px;margin:10px 0}.review-item.correct{border-left:5px solid var(--success)}.review-item.wrong{border-left:5px solid var(--danger)}.review-item p{color:var(--muted)}
+.notice{padding:14px 16px;border-radius:14px;background:#f3f6ff;color:#31476d;line-height:1.6}
+footer{padding:35px 0;color:var(--muted);text-align:center}
+.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}.contact-card{background:white;border:1px solid var(--line);border-radius:22px;padding:24px;box-shadow:var(--shadow)}.comment-list{display:grid;gap:12px}.comment-item{background:#f7f9fd;border:1px solid var(--line);border-radius:14px;padding:16px}.comment-item small{color:var(--muted)}@media(max-width:700px){.contact-grid{grid-template-columns:1fr}}
+
+@media(max-width:850px){.plan-grid{grid-template-columns:1fr 1fr}.cards,.lesson-grid,.choice-grid{grid-template-columns:1fr 1fr}.stats{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.nav-links{display:none}.hero-content{padding:55px 0}.hero{border-radius:0 0 28px 28px}h1{letter-spacing:-2px}.stats,.cards,.lesson-grid,.choice-grid,.plan-grid,.form-grid,.area-grid{grid-template-columns:1fr}.section{padding:38px 0}.panel{padding:20px}.quiz-nav button{min-width:0;flex:1}}
+
+.learn-layout{display:grid;grid-template-columns:280px 1fr;gap:24px;align-items:start}
+.lesson-sidebar{position:sticky;top:20px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:20px}
+.lesson-sidebar h3{margin:0 0 5px}
+.lesson-nav-btn{width:100%;text-align:left;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.035);color:inherit;padding:12px 13px;border-radius:12px;margin-top:9px;cursor:pointer}
+.lesson-nav-btn.active{border-color:rgba(231,190,88,.8);background:rgba(231,190,88,.12)}
+.lesson-nav-btn small{display:block;opacity:.65;margin-top:3px}
+.lesson-content{min-width:0}
+.lesson-hero{background:linear-gradient(135deg,rgba(20,61,110,.85),rgba(12,27,50,.95));border:1px solid rgba(255,255,255,.1);border-radius:24px;padding:30px;margin-bottom:18px}
+.lesson-icon{font-size:42px}
+.lesson-hero h2{font-size:32px;margin:8px 0}
+.lesson-section{background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:22px;margin:14px 0}
+.lesson-section h3{margin-top:0;color:#f0cc72}
+.lesson-section p{line-height:1.75}
+.lesson-practice{background:rgba(231,190,88,.09);border:1px solid rgba(231,190,88,.3);border-radius:18px;padding:22px;margin-top:18px}
+.lesson-practice strong{color:#f0cc72}
+.lesson-controls{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:22px}
+.lesson-progress{opacity:.75;font-weight:700}
+@media(max-width:850px){.learn-layout{grid-template-columns:1fr}.lesson-sidebar{position:static}.lesson-hero h2{font-size:26px}}
+
+.lesson-package-grid{align-items:stretch}
+.lesson-access-note{margin:24px 0;padding:18px 20px;border-radius:16px;background:rgba(231,190,88,.09);border:1px solid rgba(231,190,88,.28);line-height:1.6}
+.lesson-nav-btn.locked{opacity:.65}
+.lesson-nav-btn.locked:hover{border-color:rgba(231,190,88,.5)}
+
+.post-test-learning{margin-top:24px}
+.learning-recommendation{background:linear-gradient(135deg,rgba(20,61,110,.72),rgba(12,27,50,.94));border:1px solid rgba(255,255,255,.1);border-radius:22px;padding:26px}
+.learning-recommendation h3{margin-top:0;color:#f0cc72}
+.recommendation-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:18px}
+.recommendation-card{background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.09);border-radius:16px;padding:18px}
+.recommendation-card h4{margin:0 0 8px}
+.recommendation-card p{line-height:1.6}
+.locked-note{opacity:.75;font-size:.92rem}
+.study-plan{margin-top:18px;padding:20px;border-radius:18px;background:rgba(231,190,88,.08);border:1px solid rgba(231,190,88,.25)}
+.topic-quiz-card{max-width:820px;margin:auto;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:22px;padding:26px}
+.topic-quiz-option{display:block;width:100%;text-align:left;margin:10px 0;padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.035);color:inherit;cursor:pointer}
+.topic-quiz-option:hover{border-color:rgba(231,190,88,.7)}
+.topic-quiz-result{margin-top:20px;padding:18px;border-radius:16px;background:rgba(255,255,255,.05)}
+
+.account-box{max-width:620px;margin:0 auto}.account-tabs{display:flex;gap:10px;margin-bottom:20px}
+.account-tab{flex:1;padding:12px;border:1px solid var(--line);background:var(--surface);border-radius:10px;font-weight:800;cursor:pointer}
+.account-tab.active{background:var(--ink);color:#fff}.account-note{font-size:.92rem;color:var(--muted);margin-top:10px}
+.account-user{display:flex;justify-content:space-between;align-items:center;gap:15px;padding:14px 16px;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+.performance-stats{margin:20px 0}
+.performance-row{display:flex;justify-content:space-between;gap:20px;padding:16px 0;border-bottom:1px solid var(--line)}
+.performance-row:last-child{border-bottom:0}
+.performance-bar{height:9px;background:var(--line);border-radius:20px;overflow:hidden;margin-top:8px}
+.performance-bar span{display:block;height:100%;background:var(--blue);border-radius:20px}
+.performance-empty{padding:18px;border:1px dashed var(--line);border-radius:14px;color:var(--muted)}
+
+
+.home-account-card{margin:24px 0;padding:20px 24px;border:1px solid var(--line);border-radius:18px;background:var(--surface);box-shadow:0 8px 28px rgba(0,0,0,.06)}.home-account-card>div{display:flex;align-items:center;justify-content:space-between;gap:20px}.home-account-card p{margin:6px 0 0;color:var(--muted)}.home-account-actions{display:flex;gap:10px;flex-wrap:wrap}@media(max-width:700px){.home-account-card>div{align-items:flex-start;flex-direction:column}.home-account-actions{width:100%}.home-account-actions button{width:100%}}
+/* Academy upgrade */
+.dashboard-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:22px 0}
+.dashboard-card{background:#fff;border:1px solid var(--line);border-radius:20px;padding:20px;box-shadow:var(--shadow)}
+.dashboard-card .big{font-size:32px;font-weight:900;color:var(--navy);margin:6px 0}
+.dashboard-card small,.muted{color:var(--muted)}
+.home-dashboard{margin:28px 0}
+.answer-status{font-size:13px;color:var(--muted);font-weight:700}
+.question-tools{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:12px;flex-wrap:wrap}
+.question-dots{display:flex;gap:6px;flex-wrap:wrap;margin-top:14px}
+.question-dot{width:28px;height:28px;border-radius:50%;border:1px solid var(--line);background:#fff;font-size:11px;font-weight:800}
+.question-dot.current{border-color:var(--blue);box-shadow:0 0 0 3px #eaf0ff}
+.question-dot.done{background:#edf8f2;border-color:#b8dfca;color:var(--success)}
+@media(max-width:850px){.dashboard-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.dashboard-grid{grid-template-columns:1fr}.question{padding:20px}.question h3{font-size:19px}
+/* Scroll-through exam mode */
+
+.scroll-test-intro{
+  position:sticky;
+  top:0;
+  z-index:5;
+  display:flex;
+  justify-content:space-between;
+  gap:16px;
+  align-items:center;
+  padding:14px 18px;
+  margin-bottom:18px;
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-radius:14px;
+  box-shadow:0 6px 18px rgba(0,0,0,.05);
+}
+
+.scroll-test-intro span{
+  color:var(--muted);
+  font-size:13px;
+}
+
+.scroll-question{
+  scroll-margin-top:90px;
+  margin-bottom:18px;
+}
+
+.scroll-test-submit{
+  position:sticky;
+  bottom:14px;
+  z-index:5;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:18px;
+  padding:16px 18px;
+  margin-top:22px;
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-radius:16px;
+  box-shadow:0 10px 30px rgba(0,0,0,.10);
+}
+
+.scroll-test-submit small{
+  display:block;
+  color:var(--muted);
+  margin-top:4px;
+}
+
+@media(max-width:650px){
+
+  .scroll-test-intro{
+    display:block;
+  }
+
+  .scroll-test-intro span{
+    display:block;
+    margin-top:5px;
+  }
+
+  .scroll-test-submit{
+    display:block;
+  }
+
+  .scroll-test-submit button{
+    width:100%;
+    margin-top:12px;
+  }
+
+}
+
+.bank-modal{position:fixed;inset:0;z-index:9999;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(15,23,42,.58);backdrop-filter:blur(6px)}
+.bank-modal.open{display:flex}
+.bank-modal-card{position:relative;width:min(520px,100%);padding:28px;border-radius:22px;background:#fff;box-shadow:0 24px 70px rgba(0,0,0,.25)}
+.bank-modal-close{position:absolute;right:14px;top:10px;border:0;background:transparent;font-size:30px;cursor:pointer;color:#667085}
+.bank-modal-amount{font-size:20px;font-weight:800;margin:8px 0 18px}
+.bank-account-box{display:grid;gap:12px;padding:18px;margin:16px 0;border-radius:16px;background:#f6f8fc;border:1px solid #dfe4ee}
+.bank-account-box div{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.bank-account-box span{color:#667085}
+.bank-account-box strong{text-align:right}
+.bank-modal-card .full{width:100%;margin-top:10px}
+
+</style>
+<style id="scroll-test-fix-css">
+.scroll-test-intro{position:sticky;top:0;z-index:5;display:flex;justify-content:space-between;gap:16px;align-items:center;padding:14px 18px;margin-bottom:18px;background:var(--surface,#fff);border:1px solid var(--line,#ddd);border-radius:14px;box-shadow:0 6px 18px rgba(0,0,0,.05)}
+.scroll-test-intro span{color:var(--muted,#666);font-size:13px}
+.scroll-question{scroll-margin-top:90px;margin-bottom:18px}
+.scroll-test-submit{position:sticky;bottom:14px;z-index:5;display:flex;justify-content:space-between;align-items:center;gap:18px;padding:16px 18px;margin-top:22px;background:var(--surface,#fff);border:1px solid var(--line,#ddd);border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.10)}
+.scroll-test-submit small{display:block;color:var(--muted,#666);margin-top:4px}
+@media(max-width:650px){.scroll-test-intro{display:block}.scroll-test-intro span{display:block;margin-top:5px}.scroll-test-submit{display:block}.scroll-test-submit button{width:100%;margin-top:12px}}
+</style>
+<style id="global-classy-background">
+body{
+  background:
+    radial-gradient(circle at 12% 8%, rgba(36,87,214,.14), transparent 28%),
+    radial-gradient(circle at 88% 18%, rgba(214,168,79,.14), transparent 24%),
+    linear-gradient(135deg, #f4f7fc 0%, #eef2fa 48%, #f8f6f0 100%);
+  background-attachment: fixed;
+}
+.page{
+  min-height:100vh;
+  background:
+    radial-gradient(circle at 8% 12%, rgba(36,87,214,.07), transparent 26%),
+    radial-gradient(circle at 92% 80%, rgba(214,168,79,.08), transparent 24%);
+}
+.page.active{animation:pageFade .35s ease both}
+@keyframes pageFade{
+  from{opacity:.55;transform:translateY(6px)}
+  to{opacity:1;transform:translateY(0)}
+}
+.page .card,
+.page .question,
+.page .lesson-card,
+.page .plan-card,
+.page .account-card,
+.page .result-card{
+  background:rgba(255,255,255,.90);
+  backdrop-filter:blur(8px);
+}
+</style>
+
+<style id="study-guide-css">
+.study-guide-hero{display:grid;grid-template-columns:1.5fr .8fr;gap:28px;align-items:center;margin-bottom:24px}
+.study-guide-hero h3{font-size:28px;margin:8px 0 10px}
+.study-guide-progress{padding:18px;border:1px solid var(--line);border-radius:16px;background:rgba(255,255,255,.72)}
+.study-guide-progress .progress{margin-top:12px}
+.study-guide-grid{display:grid;grid-template-columns:260px 1fr;gap:24px;align-items:start}
+.study-guide-index{position:sticky;top:18px}
+.study-guide-index h3{margin-top:0}
+.study-index-btn{width:100%;display:flex;gap:10px;align-items:flex-start;text-align:left;border:1px solid var(--line);background:rgba(255,255,255,.7);border-radius:12px;padding:11px;margin-top:8px;cursor:pointer;color:var(--text)}
+.study-index-btn.active{border-color:var(--gold);box-shadow:0 5px 16px rgba(16,35,63,.08)}
+.study-index-btn strong,.study-index-btn small{display:block}
+.study-index-btn small{color:var(--muted);margin-top:3px}
+.study-topic{scroll-margin-top:24px;background:rgba(255,255,255,.9);border:1px solid var(--line);border-radius:22px;padding:26px;margin-bottom:20px;box-shadow:var(--shadow)}
+.study-topic-head{display:flex;justify-content:space-between;gap:16px;align-items:flex-start}
+.study-topic-head h3{font-size:25px;margin:6px 0 0}
+.study-intro{font-size:16px;line-height:1.75;color:var(--muted)}
+.study-section{border-top:1px solid var(--line);padding:18px 0}
+.study-section h4{font-size:18px;margin:0 0 9px;color:var(--navy)}
+.study-section div{line-height:1.75;color:var(--text)}
+.study-section ul,.study-section ol{line-height:1.75}
+.study-topic-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;padding-top:16px;border-top:1px solid var(--line)}
+.study-guide-bottom{display:grid;grid-template-columns:1fr auto;gap:30px;margin:24px 0}
+.study-guide-bottom h3{margin:7px 0 12px}
+.study-checklist{line-height:1.9;padding-left:22px}
+.study-guide-actions{display:flex;flex-direction:column;gap:10px;min-width:190px}
+@media(max-width:850px){
+  .study-guide-hero,.study-guide-grid,.study-guide-bottom{grid-template-columns:1fr}
+  .study-guide-index{position:static}
+}
+@media(max-width:600px){
+  .study-topic-head{display:block}
+  .study-review-btn{margin-top:12px}
+  .study-guide-actions button{width:100%}
+}
+</style>
+<style id="debugged-ui-css">
+.page-head{width:min(1120px,92%);margin:0 auto;padding:34px 0 12px;display:flex;justify-content:space-between;gap:20px;align-items:flex-start}
+.page-head h2{font-size:34px;margin:0 0 7px}.page-head p{color:var(--muted)}
+.page-head .primary,.page-head .btn{flex-shrink:0}
+.btn{border:0;border-radius:14px;padding:12px 18px;font-weight:800;cursor:pointer}
+.btn.primary{background:var(--gold);color:#17243a}.btn.ghost{background:#eef1f7;color:var(--navy)}
+.plan-card,.lesson-card,.account-card,.result-card{background:rgba(255,255,255,.92);border:1px solid var(--line);border-radius:22px;padding:24px;box-shadow:var(--shadow)}
+.plan-card{position:relative}
+.plan-badge{display:inline-block;padding:5px 9px;border-radius:99px;background:#edf2ff;color:var(--blue);font-size:11px;font-weight:800}
+.full{width:100%}
+</style>
+<style id="daily-plan-css">
+.daily-plan-hero{display:flex;justify-content:space-between;gap:24px;align-items:center;margin-bottom:20px}.daily-plan-hero h3{font-size:28px;margin:8px 0}.daily-status{padding:12px 16px;border-radius:99px;background:#edf2ff;color:var(--blue);font-weight:700;white-space:nowrap}.daily-status.done{background:#eaf8f0;color:var(--success)}
+.daily-topic-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px}.daily-topic-card{background:rgba(255,255,255,.92);border:1px solid var(--line);border-radius:20px;padding:22px;box-shadow:var(--shadow)}.daily-topic-card h3{margin:7px 0 10px}.daily-topic-card p{color:var(--muted);line-height:1.7}.daily-topic-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}.daily-test-card{display:flex;justify-content:space-between;gap:24px;align-items:center;margin:22px 0}.daily-test-card h3{margin:7px 0}.daily-test-card p,.daily-plan-note p{color:var(--muted);line-height:1.7}.daily-plan-note{margin-bottom:30px}.daily-practice-question{margin-bottom:18px}.daily-result{text-align:center;margin-top:20px}.daily-result .result-score{font-size:56px;font-weight:900;margin:10px 0}@media(max-width:700px){.daily-plan-hero,.daily-test-card{display:block}.daily-status{display:inline-block;margin-top:14px}.daily-test-card button{width:100%;margin-top:12px}}
+</style>
+<style id="question-navigator-css">
+.question-navigator{
+  position:sticky;top:12px;z-index:6;
+  margin:0 0 18px;padding:16px;
+  background:rgba(255,255,255,.96);
+  border:1px solid var(--line,#dfe4ee);
+  border-radius:16px;box-shadow:0 8px 24px rgba(0,0,0,.08);
+}
+.question-navigator h4{margin:0 0 10px}
+.question-numbers{display:flex;flex-wrap:wrap;gap:8px}
+.q-number{
+  width:38px;height:38px;border-radius:10px;border:1px solid var(--line,#dfe4ee);
+  background:#fff;cursor:pointer;font-weight:800;
+}
+.q-number.answered{background:#e8f6ec;border-color:#6db47d}
+.q-number.current{outline:3px solid rgba(36,87,214,.18)}
+.q-number.unanswered{background:#fff5f3;border-color:#e5a39a}
+.q-legend{display:flex;flex-wrap:wrap;gap:14px;margin-top:11px;font-size:12px;color:var(--muted,#667085)}
+.q-dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;border:1px solid #bbb}
+.q-dot.answered{background:#e8f6ec}.q-dot.unanswered{background:#fff5f3}
+.scroll-test-submit{
+  position:static !important;
+  margin-top:24px;
+}
+</style>
+
+</head>
+<body>
+
+<!-- HOME -->
+<section id="homePage" class="page active">
+  <div class="hero">
+    <div class="container">
+      <nav class="nav">
+        <div class="brand">Oral English <span>Academy</span></div>
+        <div class="nav-links">
+          <button onclick="showPage('homePage')">Home</button>
+          <button onclick="showPage('learnPage')">Learn</button>
+           <button onclick="openStudyGuide()">Study Guide</button>
+           <button onclick="openDailyPlan()">Daily Plan</button>
+          <button onclick="showPage('plansPage')">Tests</button>
+          <button onclick="openPerformancePage()">Performance</button>
+          <button onclick="openAdminPage()">Admin</button>
+        </div>
+      </nav>
+      <div class="hero-content">
+        <span class="eyebrow">SMART • STRUCTURED • EXAM-READY</span>
+        <h1>Master Oral English with confidence.</h1>
+        <p>Learn the sounds, stress patterns, transcription and pronunciation skills you need, then test yourself with structured exams that become more challenging as you progress.</p>
+    <div class="home-account-card" id="homeAccountCard">
+      <div id="homeSignedOut">
+        <div><strong>Already a student?</strong><p>Sign in to continue your lessons, tests and performance tracking.</p></div>
+        <div class="home-account-actions">
+          <button class="primary" onclick="goToAccount('login')">Sign In</button>
+          <button class="back-btn" onclick="goToAccount('register')">Create Account</button>
+        </div>
+      </div>
+      <div id="homeSignedIn" style="display:none">
+        <div><strong>Welcome back, <span id="homeUserName"></span>!</strong><p>Your account is ready. Continue learning or check your performance.</p></div>
+        <div class="home-account-actions">
+          <button class="primary" onclick="openPerformancePage()">My Performance</button>
+          <button class="back-btn" onclick="logoutAccount();refreshHomeAccount()">Sign Out</button>
+        </div>
+      </div>
+    </div>
+
+        <div class="hero-actions">
+          <button class="primary" onclick="showPage('rulesPage')">Start a Test →</button>
+          <button class="secondary" onclick="showPage('learnPage')">Explore Lessons</button>
+        </div>
+        <div class="stats">
+          <div class="stat"><strong>10+</strong><span>Learning areas</span></div>
+          <div class="stat"><strong>5</strong><span>Test levels</span></div>
+          <div class="stat"><strong>Auto</strong><span>Timed submission</span></div>
+          <div class="stat"><strong>24/7</strong><span>Practice access</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="container section">
+    <div id="homeStudentDashboard" class="home-dashboard" style="display:none">
+      <div class="dashboard-grid">
+        <div class="dashboard-card"><span class="muted">Overall average</span><div id="homeAvg" class="big">0%</div><small>Recorded work</small></div>
+        <div class="dashboard-card"><span class="muted">Tests completed</span><div id="homeTests" class="big">0</div><small>Tests and topic quizzes</small></div>
+        <div class="dashboard-card"><span class="muted">Current focus</span><div id="homeWeak" class="big" style="font-size:22px">—</div><small>Area needing most work</small></div>
+      </div>
+    </div>
+    <div id="studentPaymentStatus" class="dashboard-card" style="display:none;margin-top:22px">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+        <div><h3 style="margin:0">Payment Status</h3><p class="muted" style="margin:5px 0 0">Track your package payment and approval here.</p></div>
+        <button class="back-btn" type="button" onclick="refreshStudentPaymentStatus()">Refresh status</button>
+      </div>
+      <div class="payment-table-wrap" style="margin-top:16px;overflow-x:auto">
+        <table class="payment-status-table" style="width:100%;border-collapse:collapse;min-width:680px">
+          <thead>
+            <tr>
+              <th style="text-align:left;padding:14px;border-bottom:2px solid var(--line)">Package</th>
+              <th style="text-align:left;padding:14px;border-bottom:2px solid var(--line)">Price</th>
+              <th style="text-align:left;padding:14px;border-bottom:2px solid var(--line)">Status</th>
+              <th style="text-align:left;padding:14px;border-bottom:2px solid var(--line)">Approval Notice</th>
+            </tr>
+          </thead>
+          <tbody id="studentPaymentStatusList"></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="section-title"><h2>Everything in one place</h2><p>Learn first, practise next, then measure your progress.</p></div>
+    <div class="cards">
+      <div class="card"><div class="icon">📖</div><h3>Learn Oral English</h3><p>Study vowels, consonants, transcription, clusters, stress, intonation, syllables, rhymes and connected speech.</p></div>
+      <div class="card"><div class="icon">📝</div><h3>Take Tests</h3><p>Choose a level, exam and number of questions. Every test has navigation and a live countdown.</p></div>
+      <div class="card"><div class="icon">📊</div><h3>Understand Your Result</h3><p>See your score and, on eligible plans, explanations, weak areas, concentration areas and a study plan.</p></div>
+    </div>
+  </div>
+  <div class="container section" id="homeContactSection">
+    <div class="section-title"><h2>Contact Us & Comments</h2><p>Have a question, need help, or want to share feedback? You can reach the Academy directly from the Home page.</p></div>
+    <div class="contact-grid">
+      <div class="contact-card">
+        <h3>Contact the Academy</h3>
+        <p class="muted">For payment issues, account help, lessons or test support, send us a message.</p>
+        <p><strong>Email:</strong> destinyailokpede@gmail.com</p>
+        <form onsubmit="submitContactMessage(event)">
+          <label for="homeContactSubject">Subject</label>
+          <input id="homeContactSubject" required placeholder="What do you need help with?">
+          <label for="homeContactMessage">Message</label>
+          <textarea id="homeContactMessage" required rows="5" style="width:100%;padding:14px;border:1px solid #d9deea;border-radius:12px;font-size:16px;resize:vertical"></textarea>
+          <button class="primary" type="submit" style="margin-top:12px">Send Message</button>
+        </form>
+        <p id="homeContactStatus" class="notice" style="display:none;margin-top:14px"></p>
+      </div>
+      <div class="contact-card">
+        <h3>Comments & Feedback</h3>
+        <p class="muted">Share your experience or suggest an improvement.</p>
+        <form onsubmit="submitComment(event)">
+          <label for="homeCommentText">Your comment</label>
+          <textarea id="homeCommentText" required rows="6" maxlength="1000" style="width:100%;padding:14px;border:1px solid #d9deea;border-radius:12px;font-size:16px;resize:vertical"></textarea>
+          <button class="secondary" type="submit" style="margin-top:12px">Post Comment</button>
+        </form>
+        <div id="homeCommentStatus" class="notice" style="display:none;margin-top:14px"></div>
+        <div id="homePublicComments" class="comment-list" style="margin-top:18px"></div>
+      </div>
+    </div>
+  </div>
+  <footer>Oral English Academy • Built for focused learning and practice • Question bank verified</footer>
+</section>
+
+<!-- LEARN -->
+
+<section id="dailyPlanPage" class="page">
+  <div class="page-head">
+    <div>
+      <span class="eyebrow">PERSONALISED DAILY STUDY</span>
+      <h2>Today's Study Plan</h2>
+      <p id="dailyPlanIntro">Your plan is based on the lesson package you selected and the Oral English topics you have already studied.</p>
+    </div>
+    <button class="primary" onclick="openStudyGuide()">Open Study Guide →</button>
+  </div>
+  <div class="container">
+    <div id="dailyPlanBox"></div>
+  </div>
+</section>
+
+<section id="studyGuidePage" class="page">
+  <div class="page-head">
+    <div><span class="eyebrow">ORAL ENGLISH ACADEMY</span>
+      <h2>Comprehensive Study Guide</h2>
+      <p>Study each Oral English skill, practise it, review your weak areas, and prepare for your full test.</p>
+    </div>
+    <button class="primary" onclick="showPage('learnPage')">Open Lessons →</button>
+  </div>
+  <div class="container">
+    <div class="study-guide-hero panel">
+      <div><span class="eyebrow">STUDY ROADMAP</span>
+        <h3>Learn → Practise → Review → Test → Improve</h3>
+        <p>Work through the topics in order. Take the topic quiz after each lesson, then use your test feedback to decide what to review next.</p>
+      </div>
+      <div class="study-guide-progress"><strong id="studyGuideProgress">0 / 10 topics reviewed</strong>
+        <div class="progress"><div id="studyGuideProgressFill" style="width:0%"></div></div>
+      </div>
+    </div>
+    <div class="study-guide-grid">
+      <aside class="study-guide-index panel"><h3>Study Roadmap</h3><div id="studyGuideIndex"></div></aside>
+      <main id="studyGuideContent" class="study-guide-content"></main>
+    </div>
+    <div class="study-guide-bottom panel">
+      <div><span class="eyebrow">FULL-TEST CHECKLIST</span><h3>Before your full test</h3>
+        <ul class="study-checklist">
+          <li>Review vowel and consonant sound distinctions.</li>
+          <li>Practise syllable counting and word stress.</li>
+          <li>Review rhyming words and pronunciation contrasts.</li>
+          <li>Practise phonetic transcription where included in your package.</li>
+          <li>Review intonation and connected speech.</li>
+          <li>Use topic quizzes to identify weak areas.</li>
+          <li>Take the full test under timed conditions.</li>
+          <li>Read explanations and follow the recommended study plan.</li>
+        </ul>
+      </div>
+      <div class="study-guide-actions">
+        <button class="primary" onclick="showPage('learnPage')">Continue Learning</button>
+        <button class="secondary" onclick="showPage('plansPage')">View Test Packages</button>
+        <button class="back-btn" onclick="openPerformancePage()">My Performance</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="lessonPlansPage" class="page">
+  <div class="page-head">
+    <div>
+      <span class="eyebrow">LEARN ORAL ENGLISH</span>
+      <h2>Choose a Lesson Package</h2>
+      <p>Study Oral English topic by topic. Your package determines which lessons and learning tools are unlocked.</p>
+    </div>
+    <button class="btn ghost" onclick="showPage('homePage')">← Home</button>
+  </div>
+
+  <div class="plan-grid lesson-package-grid">
+    <article class="plan-card">
+      <div class="plan-badge">FREE</div>
+      <h3>Free Preview</h3>
+      <div class="price">Free</div>
+      <p>Get a taste of the course before upgrading.</p>
+      <ul>
+        <li>2 introductory topics</li>
+        <li>Sample explanations</li>
+        <li>Mini practice</li>
+      </ul>
+      <button class="btn primary full" onclick="selectLessonPackage('preview')">Start Preview</button>
+    </article>
+
+    <article class="plan-card">
+      <div class="plan-badge">FOUNDATION</div>
+      <h3>Foundation Course</h3>
+      <div class="price">₦1,000</div>
+      <p>Build a strong foundation in pronunciation.</p>
+      <ul>
+        <li>Vowel Sounds</li>
+        <li>Consonant Sounds</li>
+        <li>Syllables</li>
+        <li>Rhyming Words</li>
+      </ul>
+      <button class="btn primary full" onclick="selectLessonPackage('foundation')">Unlock Foundation</button>
+    </article>
+
+    <article class="plan-card featured">
+      <div class="plan-badge">MOST POPULAR</div>
+      <h3>Complete Oral English</h3>
+      <div class="price">₦2,000</div>
+      <p>The complete core Oral English course.</p>
+      <ul>
+        <li>Everything in Foundation</li>
+        <li>Consonant Clusters</li>
+        <li>Phonetic Transcription</li>
+        <li>Word Stress</li>
+        <li>Intonation</li>
+        <li>Connected Speech</li>
+      </ul>
+      <button class="btn primary full" onclick="selectLessonPackage('complete')">Unlock Complete</button>
+    </article>
+
+    <article class="plan-card">
+      <div class="plan-badge">ADVANCED</div>
+      <h3>Advanced Mastery</h3>
+      <div class="price">₦3,500</div>
+      <p>Go deeper with challenging pronunciation work.</p>
+      <ul>
+        <li>Everything in Complete</li>
+        <li>Advanced transcription</li>
+        <li>Difficult sound contrasts</li>
+        <li>Advanced stress patterns</li>
+        <li>Extensive practice</li>
+      </ul>
+      <button class="btn primary full" onclick="selectLessonPackage('advanced')">Unlock Advanced</button>
+    </article>
+
+    <article class="plan-card">
+      <div class="plan-badge">EXAM MASTER</div>
+      <h3>Exam Master Package</h3>
+      <div class="price">₦5,000</div>
+      <p>The most complete learning package.</p>
+      <ul>
+        <li>Everything in Advanced</li>
+        <li>Full Oral English exam strategy</li>
+        <li>Timed practice guidance</li>
+        <li>Topic-by-topic assessment</li>
+        <li>Weak-area analysis</li>
+        <li>Personalized study guidance</li>
+      </ul>
+      <button class="btn primary full" onclick="selectLessonPackage('exam')">Unlock Exam Master</button>
+    </article>
+  </div>
+
+</section>
+
+<section id="learnPage" class="page">
+  <div class="page-head">
+    <div>
+      <span class="eyebrow">ORAL ENGLISH ACADEMY</span>
+      <h2>Learn Oral English — Complete Course</h2>
+      <p>Study every major Oral English topic step by step. Each lesson contains explanations, examples, exam tips and practice.</p>
+    </div>
+    <button class="btn ghost" onclick="showPage('homePage')">← Home</button>
+  </div>
+
+  <div class="learn-layout">
+    <aside class="lesson-sidebar">
+      <h3>Course Topics</h3>
+      <p class="muted">10 topics • Beginner to exam level</p>
+      <div id="lessonNav"></div>
+    </aside>
+
+    <main class="lesson-content">
+      <div id="lessonViewer"></div>
+      <div class="lesson-controls">
+        <button class="btn ghost" onclick="previousLesson()">← Previous</button>
+        <span id="lessonProgress" class="lesson-progress"></span>
+        <button class="btn primary" onclick="nextLesson()">Next →</button>
+      </div>
+    </main>
+  </div>
+</section>
+
+<section id="rulesPage" class="page">
+  <div class="container">
+    <div class="page-header"><button class="back-btn" onclick="showPage('homePage')">← Back</button><h2>Before you begin</h2><p>Please read the rules carefully.</p></div>
+    <div class="panel">
+      <div class="notice">
+        <strong>Test rules</strong>
+        <ul>
+          <li>Answer each question before the timer expires.</li>
+          <li>Scroll through all questions and select an answer for each one.</li>
+          <li>Your answers are saved as you go.</li>
+          <li>When the timer reaches <strong>00:00</strong>, the test is submitted automatically.</li>
+          <li>Correct answers are not shown until marking is complete.</li>
+          <li>Do not refresh or close the page during a test.</li>
+        </ul>
+      </div>
+      <br><button class="primary" onclick="showPage('plansPage')">I Understand — Continue →</button>
+    </div>
+  </div>
+</section>
+
+<!-- PLANS -->
+<section id="plansPage" class="page">
+  <div class="container">
+    <div class="page-header"><button class="back-btn" onclick="showPage('rulesPage')">← Back</button><h2>Choose your test level</h2><p>Higher levels unlock harder questions and deeper learning support.</p></div>
+    <div id="planGrid" class="plan-grid"></div>
+    <div class="panel">
+      <h3>Selected plan</h3>
+      <p id="planSummary" class="notice">Choose a plan above.</p>
+      <button id="continuePlanBtn" class="primary" onclick="continueFromPlan()" disabled>Continue →</button>
+    </div>
+  </div>
+</section>
+
+<!-- EXAM CHOICE -->
+<section id="examPage" class="page">
+  <div class="container">
+    <div class="page-header"><button class="back-btn" onclick="showPage('plansPage')">← Back</button><h2>Choose your exam</h2><p>Different exam numbers use different seeded question selections.</p></div>
+    <div id="examChoices" class="choice-grid"></div>
+    <div class="panel">
+      <h3>Choose number of questions</h3>
+      <div id="questionChoices" class="choice-grid"></div>
+      <div id="examSummary" class="notice" style="margin-top:18px"></div>
+      <button class="primary" onclick="goToCandidate()">Continue →</button>
+    </div>
+  </div>
+</section>
+
+<!-- ACCOUNT / CANDIDATE -->
+<section id="candidatePage" class="page">
+  <div class="container">
+    <div class="page-header"><button class="back-btn" onclick="showPage('homePage')">← Home</button><h2>Candidate account</h2><p>Create an account or sign in. You can also access sign in directly from the Home page.</p></div>
+    <div class="panel account-box">
+      <div id="loggedInBox" style="display:none">
+        <div class="account-user">
+          <div><strong id="loggedInName"></strong><br><small id="loggedInEmail"></small></div>
+          <button class="back-btn" onclick="logoutAccount()">Sign out</button>
+        </div>
+        <br>
+        <button class="primary" onclick="startTest()">Start Test →</button>
+      </div>
+
+      <div id="accountForms">
+        <div class="account-tabs">
+          <button id="registerTab" class="account-tab active" onclick="showAccountForm('register')">Create account</button>
+          <button id="loginTab" class="account-tab" onclick="showAccountForm('login')">Sign in</button>
+        </div>
+
+        <div id="registerForm">
+          <div class="form-grid">
+            <div><label for="registerName">Full name</label><input id="registerName" placeholder="Enter your full name"></div>
+            <div><label for="registerEmail">Email address</label><input id="registerEmail" type="email" placeholder="Enter your email"></div>
+            <div><label for="registerPassword">Create password</label><input id="registerPassword" type="password" placeholder="Create a password"></div>
+            <div><label for="registerPassword2">Confirm password</label><input id="registerPassword2" type="password" placeholder="Confirm your password"></div>
+          </div>
+          <p id="registerError" style="color:var(--danger);font-weight:700"></p>
+          <button class="primary" onclick="registerAccount()">Create Account →</button>
+          <p class="account-note">Your account lets the site remember your name and email on this device, so you do not have to enter your email for every test.</p>
+        </div>
+
+        <div id="loginForm" style="display:none">
+          <div class="form-grid">
+            <div><label for="loginEmail">Email address</label><input id="loginEmail" type="email" placeholder="Enter your email"></div>
+            <div><label for="loginPassword">Password</label><input id="loginPassword" type="password" placeholder="Enter your password"></div>
+          </div>
+          <p id="loginError" style="color:var(--danger);font-weight:700"></p>
+          <button class="primary" onclick="loginAccount()">Sign In →</button>
+          <p class="account-note">Use the same email and password you used when you registered.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- PERFORMANCE DASHBOARD -->
+<section id="performancePage" class="page">
+  <div class="container">
+    <div class="page-header">
+      <button class="back-btn" onclick="showPage('homePage')">← Home</button>
+      <h2>My Performance</h2>
+      <p>Track your daily and weekly Oral English progress.</p>
+    </div>
+
+    <div id="performanceAccountNotice" class="notice"></div>
+
+    <div class="stats performance-stats">
+      <div class="stat"><strong id="perfTests">0</strong><span>Tests completed</span></div>
+      <div class="stat"><strong id="perfAverage">0%</strong><span>Overall average</span></div>
+      <div class="stat"><strong id="perfToday">0</strong><span>Today's tests</span></div>
+      <div class="stat"><strong id="perfWeek">0</strong><span>This week's tests</span></div>
+    </div>
+
+    <div class="panel">
+      <h3>Daily performance</h3>
+      <div id="dailyPerformance"></div>
+    </div>
+
+    <div class="panel">
+      <h3>Weekly performance</h3>
+      <div id="weeklyPerformance"></div>
+    </div>
+
+    <div class="panel">
+      <h3>Recent activity</h3>
+      <div id="recentPerformance"></div>
+    </div>
+
+    <div class="panel">
+      <h3>Email reports</h3>
+      <p>Once the academy's online email service is connected, your registered email will receive your daily and weekly performance reviews automatically.</p>
+      <div class="notice">
+        <strong>What your reports contain:</strong>
+        <ul>
+          <li>Tests completed and scores</li>
+          <li>Average performance and progress</li>
+          <li>Strongest and weakest Oral English areas</li>
+          <li>Topics that need more practice</li>
+          <li>A recommended study plan</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT US -->
+<section id="contactPage" class="page">
+  <div class="container">
+    <div class="page-header">
+      <button class="back-btn" onclick="showPage('homePage')">← Home</button>
+      <h2>Contact Us</h2>
+      <p>Ask a question, report a problem, or leave feedback for Oral English Academy.</p>
+    </div>
+    <div class="contact-grid">
+      <div class="contact-card">
+        <h3>Contact the Academy</h3>
+        <p class="muted">For payment issues, account help, lessons or test support, send us a message.</p>
+        <p><strong>Email:</strong> destinyailokpede@gmail.com</p>
+        <form onsubmit="submitContactMessage(event)">
+          <label for="contactSubject">Subject</label>
+          <input id="contactSubject" required placeholder="What do you need help with?">
+          <label for="contactMessage">Message</label>
+          <textarea id="contactMessage" required rows="6" style="width:100%;padding:14px;border:1px solid #d9deea;border-radius:12px;font-size:16px;resize:vertical"></textarea>
+          <button class="primary" type="submit" style="margin-top:12px">Send Message</button>
+        </form>
+        <p id="contactStatus" class="notice" style="display:none;margin-top:14px"></p>
+      </div>
+      <div class="contact-card">
+        <h3>Comments & Feedback</h3>
+        <p class="muted">Share your experience or suggest an improvement.</p>
+        <form onsubmit="submitComment(event)">
+          <label for="commentText">Your comment</label>
+          <textarea id="commentText" required rows="7" maxlength="1000" style="width:100%;padding:14px;border:1px solid #d9deea;border-radius:12px;font-size:16px;resize:vertical"></textarea>
+          <button class="secondary" type="submit" style="margin-top:12px">Post Comment</button>
+        </form>
+        <div id="commentStatus" class="notice" style="display:none;margin-top:14px"></div>
+        <div id="publicComments" class="comment-list" style="margin-top:18px"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ADMIN PAYMENT VERIFICATION -->
+<section id="adminPage" class="page">
+  <div class="container">
+    <div class="page-header">
+      <button class="back-btn" onclick="showPage('homePage')">← Home</button>
+      <h2>Admin Payment Verification</h2>
+      <p>Review bank-transfer confirmations and approve packages after checking your Opay account.</p>
+    </div>
+    <div id="adminLoginBox" class="panel">
+      <h3>Admin sign in</h3>
+      <p>Enter your admin password to view payment confirmations.</p>
+      <input id="adminPassword" type="password" placeholder="Admin password" style="width:100%;max-width:420px;padding:13px;border:1px solid var(--line);border-radius:10px">
+      <p id="adminError" style="color:var(--danger);font-weight:700"></p>
+      <button class="primary" onclick="adminLogin()">Sign In</button>
+    </div>
+    <div id="adminDashboard" style="display:none">
+      <div class="stats">
+        <div class="stat"><strong id="adminPendingCount">0</strong><span>Pending payments</span></div>
+        <div class="stat"><strong id="adminApprovedCount">0</strong><span>Approved payments</span></div>
+      </div>
+      <div class="panel">
+        <div style="display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap">
+          <h3 style="margin:0">Payment requests</h3>
+          <button class="back-btn" onclick="loadAdminPayments()">Refresh</button>
+        </div>
+        <div id="adminPaymentsList" style="margin-top:18px"></div>
+      </div>
+      <div class="panel">
+        <div style="display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap">
+          <h3 style="margin:0">Student comments</h3>
+          <button class="back-btn" onclick="loadAdminComments()">Refresh</button>
+        </div>
+        <div id="adminCommentsList" style="margin-top:18px"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- QUIZ -->
+<section id="quizPage" class="page">
+  <div class="quiz-top">
+    <div class="container">
+      <div class="quiz-bar"><strong id="quizTitle"></strong><div id="timer" class="timer">00:00</div></div>
+      <div class="progress"><div id="progressFill"></div></div>
+    </div>
+  </div>
+  <div class="container">
+    <div id="questionArea"></div>
+    <div class="quiz-nav" style="display:none">
+      <button id="prevBtn" class="back-btn" type="button">← Back</button>
+      <button id="nextBtn" class="next-btn" type="button">Next →</button>
+    </div>
+  </div>
+</section>
+
+<!-- RESULT -->
+
+<section id="topicQuizPage" class="page">
+  <div class="page-head">
+    <div>
+      <span class="eyebrow">LEARN → PRACTISE → TEST</span>
+      <h2 id="topicQuizTitle">Topic Quiz</h2>
+      <p id="topicQuizIntro">Test yourself on the lesson you just studied.</p>
+    </div>
+    <button class="btn ghost" onclick="showPage('learnPage')">← Back to Lessons</button>
+  </div>
+  <div id="topicQuizBox"></div>
+</section>
+
+<section id="resultPage" class="page">
+  <div id="postTestLearning" class="post-test-learning"></div>
+
+  <div class="container">
+    <div class="page-header"><h2>Test Result</h2><p id="resultIntro"></p></div>
+    <div class="panel">
+      <div id="resultScore" class="result-score"></div>
+      <p id="resultStatus"></p>
+    </div>
+    <div class="panel"><h3>Areas of concentration</h3><div id="areas"></div></div>
+    <div class="panel"><h3>Study plan</h3><div id="studyPlan"></div></div>
+    <div class="panel"><h3>Answer review</h3><div id="review"></div></div>
+    <div class="hero-actions">
+      <button class="primary" onclick="retake()">Take Another Test</button>
+      <button class="back-btn" onclick="showPage('learnPage')">Study Lessons</button>
+    </div>
+  </div>
+</section>
+
+<script>
+const plans = {
+  trial:{name:"Free Trial",price:"Free",level:"trial",examCount:1,options:[10],assistance:"Score + basic weak-area result"},
+  basic:{name:"Premium Basic",price:"₦500",level:"difficult",examCount:5,options:[20,30,40],assistance:"Answers + explanations"},
+  standard:{name:"Premium Standard",price:"₦1,000",level:"more difficult",examCount:10,options:[30,50,60],assistance:"Explanations + concentration areas"},
+  advanced:{name:"Premium Advanced",price:"₦1,500",level:"very difficult",examCount:15,options:[40,60,75],assistance:"Full analysis + personalised study plan"},
+  mock:{name:"Premium Mock Exam",price:"₦2,500",level:"highest exam-style",examCount:20,options:[50,75,100],assistance:"Detailed report + explanations + study plan"}
+};
+
+const lessons = [
+  {
+    title:"Vowel Sounds",
+    icon:"🔤",
+    intro:"Vowel sounds are produced when air flows out of the mouth without a complete blockage. In Oral English, you must learn to recognise, distinguish and transcribe vowel sounds.",
+    sections:[
+      {h:"1. What is a vowel sound?",p:"A vowel is a speech sound made with a relatively open vocal tract. English vowels are important because changing one vowel can change the meaning of a word. For example, ship and sheep have different vowel sounds and different meanings."},
+      {h:"2. Pure vowels",p:"Pure vowels (monophthongs) keep roughly the same tongue position throughout the sound. English is commonly taught with short and long pure vowels. Examples include /ɪ/ in ship, /iː/ in sheep, /e/ in bed, /æ/ in cat, /ʌ/ in cup, /ɑː/ in car, /ɒ/ in hot, /ɔː/ in saw, /ʊ/ in book, /uː/ in food, /ə/ in about and /ɜː/ in bird."},
+      {h:"3. Diphthongs",p:"A diphthong is a vowel sound that moves from one vowel position toward another within the same syllable. Common examples include /eɪ/ in day, /aɪ/ in time, /ɔɪ/ in boy, /əʊ/ in go, /aʊ/ in now, /ɪə/ in near, /eə/ in hair and /ʊə/ in tour in pronunciation systems that distinguish it."},
+      {h:"4. How to identify vowel sounds",p:"Do not rely only on spelling. The same letter can represent different sounds, and different spellings can represent the same sound. Compare seat and see: different spellings, but the same vowel sound /iː/. Compare cut and put: the letter u does not represent the same vowel sound."},
+      {h:"5. Minimal pairs",p:"A minimal pair consists of two words that differ in only one phoneme and have different meanings. Examples include ship/sheep, full/fool and bit/beat. Minimal pairs are excellent for training your ear."},
+      {h:"6. Exam technique",p:"When a question asks for a word with the same vowel sound, say the words slowly and compare the actual sound, not the spelling. If necessary, use the IPA symbols supplied in the question."},
+      {h:"Quick practice",p:"Which word has the same vowel sound as sheep: ship, sit, seat or set? Answer: seat. Both sheep and seat contain /iː/."}
+    ]
+  },
+  {
+    title:"Consonant Sounds",
+    icon:"🗣️",
+    intro:"Consonants are speech sounds produced with some narrowing or obstruction of the airflow. Understanding voicing, place and manner of articulation makes consonant questions much easier.",
+    sections:[
+      {h:"1. Voiced and voiceless consonants",p:"A voiced consonant is produced with vibration of the vocal folds, while a voiceless consonant is produced without that vibration. Common pairs include /p/–/b/, /t/–/d/, /k/–/g/, /f/–/v/, /θ/–/ð/, /s/–/z/, /ʃ/–/ʒ/ and /tʃ/–/dʒ/."},
+      {h:"2. Place of articulation",p:"Place tells you where the main obstruction is made. Important places include bilabial (both lips), labiodental (lip and teeth), dental (tongue and teeth), alveolar (tongue near the alveolar ridge), postalveolar, palatal, velar and glottal."},
+      {h:"3. Manner of articulation",p:"Manner tells you how the airflow is affected. Stops include /p b t d k g/. Fricatives include /f v θ ð s z ʃ ʒ h/. Affricates include /tʃ dʒ/. Nasals include /m n ŋ/. Other important consonants include /l r j w/."},
+      {h:"4. Difficult pairs",p:"Pay special attention to sounds that learners may confuse, such as /θ/ and /t/, /ð/ and /d/, /ʃ/ and /s/, /ʒ/ and /z/, and /tʃ/ and /ʃ/. Train yourself to listen for the sound rather than the letter."},
+      {h:"5. Minimal pairs",p:"Examples include fan/van, sip/zip, thin/sin, then/den and cheap/sheep. A one-sound difference can completely change meaning."},
+      {h:"6. Exam technique",p:"For consonant questions, identify whether the question is testing sound, spelling, voicing, place or manner. Do not assume two words have the same consonant sound just because they begin with the same letter."},
+      {h:"Quick practice",p:"What is the important difference between /p/ and /b/? Answer: both are bilabial stops, but /p/ is voiceless and /b/ is voiced."}
+    ]
+  },
+  {
+    title:"Consonant Clusters",
+    icon:"🔗",
+    intro:"A consonant cluster is a sequence of two or more consonant sounds occurring together without a vowel sound between them.",
+    sections:[
+      {h:"1. What is a cluster?",p:"In a cluster, two or more consonant phonemes occur next to one another. Examples include /pl/ in play, /str/ in street, /mp/ in lamp and /kst/ in next."},
+      {h:"2. Initial clusters",p:"These occur at the beginning of a syllable or word. Examples include /bl/ in black, /tr/ in tree, /sk/ in school, /spr/ in spring and /str/ in strong."},
+      {h:"3. Medial and final clusters",p:"Clusters can also occur inside or at the end of words. Examples include /mp/ in simple, /nd/ in window, /st/ in fast and /ŋk/ in bank."},
+      {h:"4. Why clusters matter",p:"Learners sometimes insert an extra vowel into a cluster or omit one of the consonants. Oral English questions may ask you to identify words with the same cluster or to distinguish similar sounds."},
+      {h:"5. How to practise",p:"Start slowly, pronounce each consonant accurately, then blend them without adding an unwanted vowel. Move from simple clusters to longer ones such as /str/."},
+      {h:"Quick practice",p:"Which word begins with a three-consonant cluster: play, street, blue or tree? Answer: street, beginning with /str/."}
+    ]
+  },
+  {
+    title:"Phonetic Transcription",
+    icon:"📝",
+    intro:"Phonetic transcription represents pronunciation with symbols instead of ordinary spelling. The International Phonetic Alphabet (IPA) is used widely for this purpose.",
+    sections:[
+      {h:"1. Why use IPA?",p:"English spelling is not a reliable guide to pronunciation. IPA gives a consistent way to represent speech sounds. For example, the spelling 'ship' can be represented as /ʃɪp/."},
+      {h:"2. Learn the symbols",p:"Begin with common vowel and consonant symbols. Examples: /iː/ sheep, /ɪ/ ship, /æ/ cat, /ʌ/ cup, /uː/ food, /ʃ/ ship, /tʃ/ chair and /ŋ/ sing."},
+      {h:"3. Broad transcription",p:"School-level Oral English questions generally use broad phonemic transcription, written between slashes. The aim is usually to show the important phonemes rather than every tiny detail of pronunciation."},
+      {h:"4. Transcribing a word",p:"Say the word slowly, identify each sound, and then choose the IPA symbol for each sound. Do not transcribe letters automatically. Ask yourself what you actually hear."},
+      {h:"5. Stress and transcription",p:"Stress marks may appear before the stressed syllable in IPA transcription. In many dictionaries, /ˈ/ marks primary stress and /ˌ/ marks secondary stress."},
+      {h:"6. Common traps",p:"A silent letter should not receive a sound symbol. Two letters may represent one sound, such as ch in chair /tʃ/. One letter may represent different sounds in different words."},
+      {h:"Quick practice",p:"Which transcription represents 'ship': /siːp/, /ʃɪp/, /sɪp/ or /ʃiːp/? Answer: /ʃɪp/."}
+    ]
+  },
+  {
+    title:"Word Stress",
+    icon:"📌",
+    intro:"Word stress is the extra prominence given to one syllable in a word. You can hear stress through a combination of greater prominence, clearer vowel quality, length and pitch.",
+    sections:[
+      {h:"1. What is a stressed syllable?",p:"A stressed syllable is usually more prominent than the other syllables around it. English words have characteristic stress patterns, and changing stress can sometimes change meaning or grammatical category."},
+      {h:"2. Two-syllable words",p:"Many two-syllable nouns and adjectives have first-syllable stress, while many two-syllable verbs have second-syllable stress. These are useful tendencies, not rules without exceptions. Always learn common exceptions."},
+      {h:"3. Longer words",p:"Words with three or more syllables have a main stressed syllable and may also have secondary stress. Prefixes and suffixes can influence stress placement."},
+      {h:"4. Nouns and verbs",p:"Some word pairs change stress according to grammatical function. For example, present as a noun commonly has first-syllable stress, while present as a verb commonly has second-syllable stress. The spelling remains exactly the same."},
+      {h:"5. Never depend on capital letters",p:"In a proper exam question, the word should be written normally. You should determine the stress from pronunciation, not from capitalized syllables. Learn the stress pattern itself."},
+      {h:"6. How to answer stress questions",p:"Say each option naturally, identify the strongest syllable, and compare the pattern with the other options. Look for the word with a different stress pattern when the question asks for the odd one out."},
+      {h:"Quick practice",p:"In the noun 'present', which syllable normally receives the primary stress? Answer: the first syllable. In the verb 'present', the primary stress normally falls on the second syllable."}
+    ]
+  },
+  {
+    title:"Rhyming Words",
+    icon:"🎵",
+    intro:"Words rhyme when their stressed vowel and the sounds that follow it are the same, while the sounds before the stressed vowel differ.",
+    sections:[
+      {h:"1. What is rhyme?",p:"For most Oral English questions, the key is the sound from the stressed vowel onward. For example, light and night rhyme because the ending sound pattern is the same."},
+      {h:"2. Rhyme is about sound",p:"Spelling can be misleading. Words can rhyme even when their spellings look different, and words with similar spellings may not rhyme."},
+      {h:"3. Perfect rhyme",p:"A perfect rhyme has matching sound patterns from the stressed vowel onward. This is the main type tested in many school examinations."},
+      {h:"4. How to find the odd word",p:"Pronounce all the options. Identify the common sound ending shared by most of them, then select the word that does not share it."},
+      {h:"5. Accent awareness",p:"Some pronunciations differ across English varieties. School examinations generally follow the pronunciation model used in their curriculum, so listen carefully to the sound pattern presented."},
+      {h:"Quick practice",p:"Which word rhymes with 'day': say, do, boy or tea? Answer: say."}
+    ]
+  },
+  {
+    title:"Intonation",
+    icon:"↗️",
+    intro:"Intonation is the pattern of pitch movement across an utterance. It can help show whether a speaker is asking, stating, confirming, contrasting or continuing.",
+    sections:[
+      {h:"1. Rising intonation",p:"A rising pitch at the end is commonly associated with many yes/no questions and with some expressions that sound unfinished or invite continuation."},
+      {h:"2. Falling intonation",p:"A falling pitch is commonly used for many statements, commands and information questions. It can signal completion."},
+      {h:"3. Fall-rise intonation",p:"A fall-rise pattern can suggest reservation, contrast, politeness or that more information is implied. Context matters."},
+      {h:"4. Why context matters",p:"The same words can communicate different attitudes depending on intonation. Oral English questions may give a sentence and ask which intonation pattern is most appropriate."},
+      {h:"5. Exam strategy",p:"Look at the type of utterance first: yes/no question, wh-question, statement, command or unfinished thought. Then consider the likely pitch movement."},
+      {h:"Quick practice",p:"A simple completed statement such as 'She is here.' is commonly pronounced with falling intonation."}
+    ]
+  },
+  {
+    title:"Syllables",
+    icon:"🔢",
+    intro:"A syllable is a unit of spoken language built around a vowel sound or syllabic consonant. Counting syllables helps with stress, rhythm and transcription.",
+    sections:[
+      {h:"1. Counting syllables",p:"Count the spoken beats or vowel nuclei, not simply the number of vowels written. For example, 'teacher' has two syllables, while 'beautiful' has three."},
+      {h:"2. One-, two- and multi-syllable words",p:"Words may contain one syllable, two syllables or many syllables. Longer words require attention to both syllable division and stress."},
+      {h:"3. Syllabic consonants",p:"In some words, a consonant such as /l/ or /n/ can form the centre of a syllable. This is one reason spelling-based counting can be misleading."},
+      {h:"4. Syllables and stress",p:"Every syllable is not equally prominent. Learning the number of syllables makes it easier to locate primary stress and recognise rhythm."},
+      {h:"5. Exam technique",p:"Pronounce the word naturally and count its spoken units. Do not count written vowel letters mechanically."},
+      {h:"Quick practice",p:"How many syllables are in 'computer'? Answer: three — com-pu-ter."}
+    ]
+  },
+  {
+    title:"Connected Speech",
+    icon:"🔄",
+    intro:"Connected speech describes the ways sounds change, join or become less prominent when words are spoken naturally in a phrase.",
+    sections:[
+      {h:"1. Linking",p:"A final sound may connect smoothly to the beginning of the next word. This helps fluent speech sound continuous rather than like a series of isolated words."},
+      {h:"2. Assimilation",p:"A sound can become more like a neighbouring sound because of the influence of the surrounding sounds. This is common in rapid, natural speech."},
+      {h:"3. Elision",p:"A sound may be omitted in connected speech, especially in fast or casual pronunciation. The written form does not necessarily change."},
+      {h:"4. Weak forms",p:"Common grammatical words such as articles, auxiliary verbs and prepositions often have weaker pronunciations when they are not stressed. The exact weak form depends on the word and context."},
+      {h:"5. Why it matters",p:"Connected speech explains why natural spoken English can sound different from carefully pronounced dictionary forms. Oral English exams may test recognition of these patterns."},
+      {h:"Quick practice",p:"When two words are pronounced smoothly together, the process may involve linking. The important point is to listen to the connected sound rather than reading each word in isolation."}
+    ]
+  },
+  {
+    title:"Oral English Exam Strategy",
+    icon:"🎯",
+    intro:"Knowing the sounds is only part of success. You also need a reliable method for handling Oral English questions under time pressure.",
+    sections:[
+      {h:"1. Read the exact instruction",p:"First identify whether the question asks about vowel sound, consonant sound, stress, rhyme, intonation, transcription or another feature. Many wrong answers come from answering a different question from the one asked."},
+      {h:"2. Listen to sound, not spelling",p:"Letters are clues, not guarantees. Pronounce the options mentally and compare the sounds. This is especially important for vowels, consonants and rhyming words."},
+      {h:"3. Use elimination",p:"Remove options that clearly do not match the required sound or pattern. Then compare the remaining choices carefully."},
+      {h:"4. Watch for stress patterns",p:"For stress questions, pronounce each word normally and identify the strongest syllable. Never use capital letters in the question as a clue; the correct skill is recognising the spoken stress pattern."},
+      {h:"5. Manage your time",p:"Do not spend too long on one question. Mark your best answer, move on, and return to difficult questions if the test allows it."},
+      {h:"6. Review intelligently",p:"When reviewing, focus on questions where you were unsure rather than changing answers randomly. Your first answer is not automatically correct or incorrect; change it only when you have a clear reason."},
+      {h:"7. Learn from your result",p:"After a test, study the areas where you lost marks. A good Oral English study plan should target your weak areas instead of making you repeat topics you already understand."},
+      {h:"Quick practice",p:"If you are unsure whether two words contain the same vowel sound, say them slowly and compare the vowel itself. Do not decide only from the spelling."}
+    ]
+  }
+];
+
+const questionBank = [
+ // Section A
+ {section:"Vowel & Consonant Sounds",area:"Vowels",q:"Which word contains the vowel sound /iː/ as in 'see'?",o:["ship","sheep","sit","fill"],a:1,e:"Sheep contains the long vowel /iː/."},
+ {section:"Vowel & Consonant Sounds",area:"Vowels",q:"Which word contains the vowel sound /ɪ/ as in 'sit'?",o:["seat","sit","set","sat"],a:1,e:"Sit contains /ɪ/."},
+ {section:"Vowel & Consonant Sounds",area:"Vowels",q:"Which word contains the diphthong /eɪ/?",o:["rain","ran","ring","run"],a:0,e:"Rain contains /eɪ/."},
+ {section:"Vowel & Consonant Sounds",area:"Vowels",q:"Which word contains the diphthong /aɪ/?",o:["coin","boy","time","team"],a:2,e:"Time contains /aɪ/."},
+ {section:"Vowel & Consonant Sounds",area:"Vowels",q:"Which pair is a minimal pair differing in the vowel sound?",o:["ship / sheep","play / played","cat / cats","book / books"],a:0,e:"Ship and sheep differ in the vowel phoneme /ɪ/ versus /iː/."},
+ {section:"Vowel & Consonant Sounds",area:"Consonants",q:"Which word begins with the sound /j/?",o:["yellow","judge","giant","jam"],a:0,e:"Yellow begins with /j/. The other three begin with /dʒ/."},
+ {section:"Vowel & Consonant Sounds",area:"Consonants",q:"Which word begins with the sound /dʒ/?",o:["yes","judge","yellow","young"],a:1,e:"Judge begins with /dʒ/."},
+ {section:"Vowel & Consonant Sounds",area:"Consonants",q:"Which word contains the sound /ʃ/?",o:["vision","measure","nation","judge"],a:2,e:"In nation, the final sound sequence includes /ʃ/."},
+ {section:"Vowel & Consonant Sounds",area:"Consonants",q:"Which pair differs mainly by voicing?",o:["fan / van","ship / sheep","cat / cot","rice / rise"],a:0,e:"/f/ is voiceless and /v/ is voiced."},
+ {section:"Vowel & Consonant Sounds",area:"Consonants",q:"Which sound is voiced?",o:["/p/","/t/","/k/","/b/"],a:3,e:"/b/ is a voiced bilabial plosive."},
+ {section:"Vowel & Consonant Sounds",area:"Consonants",q:"Which sound is a voiceless dental fricative?",o:["/ð/","/θ/","/z/","/ʒ/"],a:1,e:"/θ/ is the voiceless dental fricative, as in think."},
+ {section:"Vowel & Consonant Sounds",area:"Consonants",q:"Which sound is the voiced dental fricative?",o:["/θ/","/f/","/ð/","/v/"],a:2,e:"/ð/ is the voiced dental fricative, as in this."},
+ {section:"Vowel & Consonant Sounds",area:"Consonants",q:"Which sound is a nasal consonant?",o:["/m/","/s/","/l/","/r/"],a:0,e:"/m/ is a bilabial nasal."},
+ {section:"Vowel & Consonant Sounds",area:"Consonants",q:"Which word begins with a voiceless labiodental fricative?",o:["van","fan","ban","man"],a:1,e:"Fan begins with /f/, a voiceless labiodental fricative."},
+ {section:"Vowel & Consonant Sounds",area:"Consonants",q:"Which word begins with /tʃ/?",o:["chair","share","jeep","there"],a:0,e:"Chair begins with /tʃ/."},
+ {section:"Vowel & Consonant Sounds",area:"Consonants",q:"Which word contains the sound /ʒ/?",o:["vision","mission","chair","zebra"],a:0,e:"Vision contains the consonant sound /ʒ/ in the middle of the word."},
+ {section:"Vowel & Consonant Sounds",area:"Consonants",q:"Which word contains /ŋ/ at the end?",o:["sing","sin","sip","sit"],a:0,e:"Sing ends with /ŋ/."},
+ {section:"Vowel & Consonant Sounds",area:"Consonants",q:"Which pair begins with the same consonant sound?",o:["chair / share","thin / this","ship / shoe","judge / yellow"],a:2,e:"Ship and shoe both begin with the consonant sound /ʃ/."},
+ {section:"Vowel & Consonant Sounds",area:"Clusters",q:"Which word begins with the consonant cluster /str/?",o:["street","seat","sweet","sheet"],a:0,e:"Street begins /str/."},
+ {section:"Vowel & Consonant Sounds",area:"Clusters",q:"Which word begins with the consonant cluster /pl/?",o:["play","pay","pray","lay"],a:0,e:"Play begins /pl/."},
+ {section:"Vowel & Consonant Sounds",area:"Clusters",q:"Which word ends with the consonant cluster /nd/?",o:["hand","ham","hat","hang"],a:0,e:"Hand ends /nd/."},
+ {section:"Vowel & Consonant Sounds",area:"Clusters",q:"Which word contains the cluster /tr/ at the beginning?",o:["tree","three","free","see"],a:0,e:"Tree begins /tr/."},
+ {section:"Vowel & Consonant Sounds",area:"Transcription",q:"Which transcription matches 'cat'?",o:["/kæt/","/kɑːt/","/keɪt/","/kɒt/"],a:0,e:"Cat is transcribed /kæt/ in standard British-style notation."},
+ {section:"Vowel & Consonant Sounds",area:"Transcription",q:"Which word matches /fəʊn/?",o:["fan","phone","fun","fine"],a:1,e:"Phone is /fəʊn/ in standard British-style transcription."},
+ {section:"Vowel & Consonant Sounds",area:"Transcription",q:"Which word matches /bʊk/?",o:["back","book","beak","buck"],a:1,e:"Book is /bʊk/."},
+ {section:"Vowel & Consonant Sounds",area:"Transcription",q:"Which transcription matches 'teacher'?",o:["/ˈtiːtʃə/","/ˈtɪtʃɑː/","/ˈteɪtʃə/","/ˈtʃiːtʃə/"],a:0,e:"Teacher is commonly represented /ˈtiːtʃə/ in standard British-style notation."},
+
+ // Section B
+ {section:"Rhyming Words & Word Stress",area:"Rhyming",q:"Which word rhymes with 'light'?",o:["late","height","let","lot"],a:1,e:"Light and height share the same final stressed vowel and consonant sequence /aɪt/."},
+ {section:"Rhyming Words & Word Stress",area:"Rhyming",q:"Which word does NOT rhyme with the others?",o:["great","break","steak","bread"],a:3,e:"Bread is pronounced with /e/, while great, break and steak use /eɪ/ in the pronunciation model used here."},
+ {section:"Rhyming Words & Word Stress",area:"Rhyming",q:"Which word rhymes with 'train'?",o:["plain","thin","turn","torn"],a:0,e:"Train and plain rhyme."},
+ {section:"Rhyming Words & Word Stress",area:"Rhyming",q:"Which pair rhymes?",o:["rough / through","food / mood","move / love","blood / good"],a:1,e:"Food and mood both end with /uːd/."},
+ {section:"Rhyming Words & Word Stress",area:"Rhyming",q:"Which word rhymes with 'choice'?",o:["chase","voice","cheese","choose"],a:1,e:"Choice and voice rhyme."},
+ {section:"Rhyming Words & Word Stress",area:"Rhyming",q:"Which word does NOT rhyme with the others?",o:["near","fear","bear","clear"],a:2,e:"Bear has /eə/ while near, fear and clear have /ɪə/ in standard British pronunciation."},
+ {section:"Rhyming Words & Word Stress",area:"Stress",q:"Which syllable is stressed in the noun 'present'?",o:["first syllable","second syllable","both equally","neither"],a:0,e:"The noun present has stress on the first syllable: present."},
+ {section:"Rhyming Words & Word Stress",area:"Stress",q:"Which syllable is stressed in the verb 'record'?",o:["first syllable","second syllable","both equally","neither"],a:1,e:"The verb record has stress on the second syllable: record."},
+ {section:"Rhyming Words & Word Stress",area:"Stress",q:"Which word is stressed on its first syllable?",o:["about","begin","table","arrive"],a:2,e:"Table is stressed on the first syllable."},
+ {section:"Rhyming Words & Word Stress",area:"Stress",q:"Which word is stressed on its second syllable?",o:["doctor","mother","relax","table"],a:2,e:"Relax is stressed on the second syllable."},
+ {section:"Rhyming Words & Word Stress",area:"Stress",q:"Which word normally has stress on the second syllable?",o:["present (noun)","table","begin","doctor"],a:2,e:"Begin normally has primary stress on the second syllable."},
+ {section:"Rhyming Words & Word Stress",area:"Stress",q:"Which word has three syllables?",o:["teacher","important","book","street"],a:1,e:"Important has three syllables: important."},
+ {section:"Rhyming Words & Word Stress",area:"Stress",q:"Which word has stress on the first syllable?",o:["photograph","photography","photographic","engineer"],a:0,e:"Photograph is commonly stressed on the first syllable: photograph."},
+ {section:"Rhyming Words & Word Stress",area:"Stress",q:"Which word has stress on the second syllable?",o:["photograph","photography","photographic","citizen"],a:1,e:"Photography is commonly stressed on the second syllable: photography."},
+ {section:"Rhyming Words & Word Stress",area:"Intonation",q:"Which intonation pattern is commonly associated with a neutral statement?",o:["falling","always rising","always level","no pitch movement"],a:0,e:"Neutral declarative statements commonly use falling intonation."},
+ {section:"Rhyming Words & Word Stress",area:"Intonation",q:"Which intonation pattern is commonly associated with many yes/no questions?",o:["falling","rising","no pitch movement","whispered"],a:1,e:"Many yes/no questions commonly use rising intonation."},
+ {section:"Rhyming Words & Word Stress",area:"Syllables",q:"How many syllables does 'computer' have?",o:["1","2","3","4"],a:2,e:"Computer is commonly pronounced with three syllables: computer."},
+ {section:"Rhyming Words & Word Stress",area:"Syllables",q:"How many syllables does 'beautiful' have?",o:["2","3","4","5"],a:1,e:"Beautiful has three syllables: beau-ti-ful."},
+ {section:"Rhyming Words & Word Stress",area:"Connected Speech",q:"Which process can occur when one sound changes because of a neighbouring sound?",o:["assimilation","alphabetisation","capitalisation","punctuation"],a:0,e:"Assimilation occurs when a sound becomes more like a neighbouring sound."},
+ {section:"Rhyming Words & Word Stress",area:"Connected Speech",q:"What is linking in connected speech?",o:["joining sounds across word boundaries","adding capital letters","removing all vowels","changing every stressed syllable"],a:0,e:"Linking connects sounds across word boundaries in fluent speech."},
+ {section:"Rhyming Words & Word Stress",area:"Transcription",q:"Which word matches /dɒg/ in standard British-style transcription?",o:["dig","dog","dug","dock"],a:1,e:"Dog is /dɒg/ in standard British-style transcription."},
+ {section:"Rhyming Words & Word Stress",area:"Transcription",q:"Which transcription matches 'ship'?",o:["/ʃɪp/","/ʃiːp/","/sɪp/","/tʃɪp/"],a:0,e:"Ship is /ʃɪp/."},
+ {section:"Rhyming Words & Word Stress",area:"Transcription",q:"Which word matches /θɪŋk/?",o:["thing","think","sink","thick"],a:1,e:"Think is /θɪŋk/."},
+ {section:"Rhyming Words & Word Stress",area:"Clusters",q:"Which word contains the final cluster /sts/?",o:["tests","tense","tents","texts"],a:0,e:"Tests ends with the cluster /sts/."},
+ {section:"Rhyming Words & Word Stress",area:"Clusters",q:"Which word begins with /sk/?",o:["school","shoe","chew","queue"],a:0,e:"School begins /sk/."},
+ {section:"Rhyming Words & Word Stress",area:"Clusters",q:"Which word begins with /θr/?",o:["three","tree","free","see"],a:0,e:"Three begins /θr/."},
+{"section":"Vowel & Consonant Sounds","area":"Vowels","q":"Which word contains the vowel sound /æ/ as in 'cat'?","o":["cart","cut","cat","coat"],"a":2,"e":"Cat contains the vowel /æ/."},
+{"section":"Vowel & Consonant Sounds","area":"Vowels","q":"Which word contains the vowel sound /ʌ/ as in 'cup'?","o":["cup","coop","cap","cop"],"a":0,"e":"Cup contains /ʌ/."},
+{"section":"Vowel & Consonant Sounds","area":"Vowels","q":"Which word contains the vowel sound /uː/ as in 'food'?","o":["foot","food","fed","fade"],"a":1,"e":"Food contains the long vowel /uː/."},
+{"section":"Vowel & Consonant Sounds","area":"Vowels","q":"Which word contains the vowel sound /ɒ/ in standard British-style pronunciation?","o":["hot","heart","hut","heat"],"a":0,"e":"Hot commonly contains /ɒ/ in standard British-style pronunciation."},
+{"section":"Vowel & Consonant Sounds","area":"Vowels","q":"Which word contains the diphthong /ɔɪ/?","o":["coin","keen","can","cone"],"a":0,"e":"Coin contains /ɔɪ/."},
+{"section":"Vowel & Consonant Sounds","area":"Vowels","q":"Which word contains the diphthong /aʊ/?","o":["now","new","no","knee"],"a":0,"e":"Now contains /aʊ/."},
+{"section":"Vowel & Consonant Sounds","area":"Vowels","q":"Which pair has the same vowel sound?","o":["food / mood","ship / sheep","cut / put","bed / bead"],"a":0,"e":"Food and mood both contain /uː/."},
+{"section":"Vowel & Consonant Sounds","area":"Vowels","q":"Which pair differs in the vowel sound /ɪ/ and /iː/?","o":["ship / sheep","cat / cut","dog / dig","pen / pan"],"a":0,"e":"Ship has /ɪ/, while sheep has /iː/."},
+{"section":"Vowel & Consonant Sounds","area":"Vowels","q":"Which word contains the schwa /ə/?","o":["about","beat","boot","bait"],"a":0,"e":"The first syllable of about commonly contains the schwa /ə/."},
+{"section":"Vowel & Consonant Sounds","area":"Vowels","q":"Which word contains /ɜː/ in standard British-style pronunciation?","o":["bird","bad","bid","board"],"a":0,"e":"Bird contains /ɜː/."},
+{"section":"Vowel & Consonant Sounds","area":"Consonants","q":"Which word begins with the voiced consonant /v/?","o":["fan","van","fine","phone"],"a":1,"e":"Van begins with /v/, a voiced labiodental fricative."},
+{"section":"Vowel & Consonant Sounds","area":"Consonants","q":"Which word begins with the voiceless consonant /θ/?","o":["this","thin","then","they"],"a":1,"e":"Thin begins with voiceless /θ/."},
+{"section":"Vowel & Consonant Sounds","area":"Consonants","q":"Which word begins with the voiced consonant /ð/?","o":["thin","think","this","three"],"a":2,"e":"This begins with voiced /ð/."},
+{"section":"Vowel & Consonant Sounds","area":"Consonants","q":"Which word ends with /ʃ/?","o":["wash","was","wag","way"],"a":0,"e":"Wash ends with /ʃ/."},
+{"section":"Vowel & Consonant Sounds","area":"Consonants","q":"Which word ends with /tʃ/?","o":["match","mass","maze","main"],"a":0,"e":"Match ends with /tʃ/."},
+{"section":"Vowel & Consonant Sounds","area":"Consonants","q":"Which word contains the consonant /ŋ/?","o":["sing","sin","seat","seal"],"a":0,"e":"Sing contains /ŋ/ at the end."},
+{"section":"Vowel & Consonant Sounds","area":"Consonants","q":"Which pair differs mainly by voicing?","o":["sip / zip","ship / sheep","cat / cut","pen / pan"],"a":0,"e":"/s/ is voiceless and /z/ is voiced."},
+{"section":"Vowel & Consonant Sounds","area":"Consonants","q":"Which sound is a voiced alveolar fricative?","o":["/s/","/z/","/ʃ/","/f/"],"a":1,"e":"/z/ is a voiced alveolar fricative."},
+{"section":"Vowel & Consonant Sounds","area":"Consonants","q":"Which sound is a voiceless velar plosive?","o":["/g/","/k/","/d/","/b/"],"a":1,"e":"/k/ is a voiceless velar plosive."},
+{"section":"Vowel & Consonant Sounds","area":"Consonants","q":"Which sound is a voiced bilabial nasal?","o":["/n/","/ŋ/","/m/","/l/"],"a":2,"e":"/m/ is a voiced bilabial nasal."},
+{"section":"Vowel & Consonant Sounds","area":"Clusters","q":"Which word begins with /br/?","o":["bring","ring","wing","sing"],"a":0,"e":"Bring begins with the consonant cluster /br/."},
+{"section":"Vowel & Consonant Sounds","area":"Clusters","q":"Which word begins with /fl/?","o":["flow","low","foe","row"],"a":0,"e":"Flow begins with /fl/."},
+{"section":"Vowel & Consonant Sounds","area":"Clusters","q":"Which word begins with /gr/?","o":["green","keen","seen","lean"],"a":0,"e":"Green begins with /gr/."},
+{"section":"Vowel & Consonant Sounds","area":"Clusters","q":"Which word ends with /mp/?","o":["lamp","land","lane","lack"],"a":0,"e":"Lamp ends with /mp/."},
+{"section":"Vowel & Consonant Sounds","area":"Clusters","q":"Which word ends with /ŋk/?","o":["bank","ban","bad","bag"],"a":0,"e":"Bank ends with /ŋk/."},
+{"section":"Vowel & Consonant Sounds","area":"Clusters","q":"Which word contains /nd/ in the middle?","o":["window","winner","winter","wider"],"a":0,"e":"Window contains the consonant sequence /nd/ in the middle."},
+{"section":"Vowel & Consonant Sounds","area":"Transcription","q":"Which transcription matches 'fish'?","o":["/fɪʃ/","/fiːʃ/","/fʌʃ/","/fɪtʃ/"],"a":0,"e":"Fish is /fɪʃ/."},
+{"section":"Vowel & Consonant Sounds","area":"Transcription","q":"Which transcription matches 'chair'?","o":["/ʃeə/","/tʃeə/","/tʃɪə/","/kɛə/"],"a":1,"e":"Chair is commonly represented /tʃeə/ in standard British-style transcription."},
+{"section":"Vowel & Consonant Sounds","area":"Transcription","q":"Which word matches /haʊs/?","o":["house","horse","hose","hiss"],"a":0,"e":"House is /haʊs/."},
+{"section":"Vowel & Consonant Sounds","area":"Transcription","q":"Which word matches /bɔɪ/?","o":["boy","buy","bay","bee"],"a":0,"e":"Boy is /bɔɪ/."},
+{"section":"Vowel & Consonant Sounds","area":"Transcription","q":"Which transcription matches 'thin'?","o":["/tɪn/","/θɪn/","/ðɪn/","/θiːn/"],"a":1,"e":"Thin is /θɪn/."},
+{"section":"Rhyming Words & Word Stress","area":"Rhyming","q":"Which word rhymes with 'blue'?","o":["blow","shoe","buy","boy"],"a":1,"e":"Blue and shoe share the final /uː/ sound."},
+{"section":"Rhyming Words & Word Stress","area":"Rhyming","q":"Which word rhymes with 'day'?","o":["say","die","dew","do"],"a":0,"e":"Day and say rhyme."},
+{"section":"Rhyming Words & Word Stress","area":"Rhyming","q":"Which word does NOT rhyme with the others?","o":["coat","boat","bought","goat"],"a":2,"e":"Bought has a different vowel sound from coat, boat and goat in the pronunciation model used here."},
+{"section":"Rhyming Words & Word Stress","area":"Rhyming","q":"Which pair rhymes?","o":["rain / train","rough / through","come / home","love / move"],"a":0,"e":"Rain and train rhyme."},
+{"section":"Rhyming Words & Word Stress","area":"Rhyming","q":"Which word rhymes with 'chair'?","o":["share","shore","sure","cheer"],"a":0,"e":"Chair and share rhyme."},
+{"section":"Rhyming Words & Word Stress","area":"Stress","q":"Which syllable is stressed in the noun 'export'?","o":["first syllable","second syllable","both equally","neither"],"a":0,"e":"The noun export commonly has primary stress on the first syllable."},
+{"section":"Rhyming Words & Word Stress","area":"Stress","q":"Which syllable is stressed in the verb 'export'?","o":["first syllable","second syllable","both equally","neither"],"a":1,"e":"The verb export commonly has primary stress on the second syllable."},
+{"section":"Rhyming Words & Word Stress","area":"Stress","q":"Which word is normally stressed on its first syllable?","o":["happy","arrive","forget","begin"],"a":0,"e":"Happy is normally stressed on the first syllable."},
+{"section":"Rhyming Words & Word Stress","area":"Stress","q":"Which word is normally stressed on its second syllable?","o":["reply","table","window","mother"],"a":0,"e":"Reply is normally stressed on the second syllable."},
+{"section":"Rhyming Words & Word Stress","area":"Stress","q":"Which word has four syllables?","o":["education","teacher","window","important"],"a":0,"e":"Education is commonly pronounced with four syllables."},
+{"section":"Rhyming Words & Word Stress","area":"Stress","q":"Which word has stress on the first syllable?","o":["photograph","engineer","understand","afternoon"],"a":0,"e":"Photograph normally has primary stress on the first syllable."},
+{"section":"Rhyming Words & Word Stress","area":"Stress","q":"Which word has stress on the second syllable?","o":["banana","family","beautiful","hospital"],"a":0,"e":"Banana normally has primary stress on the second syllable."},
+{"section":"Rhyming Words & Word Stress","area":"Intonation","q":"Which intonation is commonly used for a neutral information question beginning with 'where'?","o":["falling","always rising","always level","whispered"],"a":0,"e":"Many neutral wh-questions commonly use falling intonation."},
+{"section":"Rhyming Words & Word Stress","area":"Syllables","q":"How many syllables does 'information' have?","o":["2","3","4","5"],"a":2,"e":"Information is commonly pronounced with four syllables."},
+{"section":"Rhyming Words & Word Stress","area":"Syllables","q":"How many syllables does 'banana' have?","o":["2","3","4","5"],"a":1,"e":"Banana has three syllables."},
+{"section":"Rhyming Words & Word Stress","area":"Connected Speech","q":"Which process involves leaving out a sound in rapid connected speech?","o":["elision","assimilation","linking","stress"],"a":0,"e":"Elision is the omission of a sound in connected speech."},
+{"section":"Rhyming Words & Word Stress","area":"Connected Speech","q":"What are weak forms?","o":["less prominent pronunciations of common grammatical words","capital letters in speech","extra stressed vowels","written abbreviations"],"a":0,"e":"Weak forms are reduced or less prominent pronunciations of common grammatical words in connected speech."},
+{"section":"Rhyming Words & Word Stress","area":"Transcription","q":"Which transcription matches 'food'?","o":["/fʊd/","/fuːd/","/fɒd/","/fʌd/"],"a":1,"e":"Food is /fuːd/."},
+{"section":"Rhyming Words & Word Stress","area":"Transcription","q":"Which word matches /ʃuː/?","o":["shoe","show","shy","she"],"a":0,"e":"Shoe is /ʃuː/."},
+{"section":"Rhyming Words & Word Stress","area":"Clusters","q":"Which word begins with /sp/?","o":["sport","sort","short","shot"],"a":0,"e":"Sport begins with the cluster /sp/."},
+{"section":"Rhyming Words & Word Stress","area":"Clusters","q":"Which word ends with /st/?","o":["fast","far","fan","fall"],"a":0,"e":"Fast ends with /st/."}
+,
+{"section":"Vowel & Consonant Sounds","area":"Vowels","q":"Which word contains /e/ as in 'bed'?","o":["bed","bad","bird","board"],"a":0,"e":"Bed contains /e/."},
+{"section":"Vowel & Consonant Sounds","area":"Vowels","q":"Which word contains /ɔː/ as in 'saw'?","o":["saw","say","so","sir"],"a":0,"e":"Saw contains /ɔː/ in standard British-style pronunciation."},
+{"section":"Vowel & Consonant Sounds","area":"Vowels","q":"Which word contains /ʊ/ as in 'book'?","o":["book","boot","back","bike"],"a":0,"e":"Book contains /ʊ/."},
+{"section":"Vowel & Consonant Sounds","area":"Vowels","q":"Which word contains /ɑː/ as in 'car'?","o":["car","care","cat","cut"],"a":0,"e":"Car contains /ɑː/ in standard British-style pronunciation."},
+{"section":"Vowel & Consonant Sounds","area":"Vowels","q":"Which word contains /əʊ/ as in 'go' in standard British-style pronunciation?","o":["go","got","good","gum"],"a":0,"e":"Go contains /əʊ/."},
+{"section":"Vowel & Consonant Sounds","area":"Vowels","q":"Which pair has different vowel sounds?","o":["ship / sheep","seat / beat","food / mood","rain / train"],"a":0,"e":"Ship and sheep have different vowels: /ɪ/ and /iː/."},
+{"section":"Vowel & Consonant Sounds","area":"Vowels","q":"Which word contains the same vowel sound as 'time'?","o":["fine","fin","fan","fun"],"a":0,"e":"Time and fine both contain /aɪ/."},
+{"section":"Vowel & Consonant Sounds","area":"Vowels","q":"Which word contains the same vowel sound as 'boy'?","o":["toy","buy","bay","bee"],"a":0,"e":"Boy and toy both contain /ɔɪ/."},
+{"section":"Vowel & Consonant Sounds","area":"Vowels","q":"Which word contains the same vowel sound as 'house'?","o":["mouse","horse","hose","his"],"a":0,"e":"House and mouse both contain /aʊ/."},
+{"section":"Vowel & Consonant Sounds","area":"Consonants","q":"Which word begins with /k/?","o":["cat","gate","vat","that"],"a":0,"e":"Cat begins with /k/."},
+{"section":"Vowel & Consonant Sounds","area":"Consonants","q":"Which word begins with /g/?","o":["go","co","show","so"],"a":0,"e":"Go begins with /g/."},
+{"section":"Vowel & Consonant Sounds","area":"Consonants","q":"Which word begins with /z/?","o":["zoo","shoe","Sue","chew"],"a":0,"e":"Zoo begins with /z/."},
+{"section":"Vowel & Consonant Sounds","area":"Consonants","q":"Which word begins with /ʃ/?","o":["ship","chip","sip","zip"],"a":0,"e":"Ship begins with /ʃ/."},
+{"section":"Vowel & Consonant Sounds","area":"Consonants","q":"Which word begins with /tʃ/?","o":["cheap","sheep","seep","jeep"],"a":0,"e":"Cheap begins with /tʃ/."},
+{"section":"Vowel & Consonant Sounds","area":"Consonants","q":"Which word begins with /dʒ/?","o":["jam","yam","ham","ram"],"a":0,"e":"Jam begins with /dʒ/."},
+{"section":"Vowel & Consonant Sounds","area":"Consonants","q":"Which word contains /ð/ in the middle?","o":["mother","mutter","matter","meter"],"a":0,"e":"Mother contains voiced /ð/."},
+{"section":"Vowel & Consonant Sounds","area":"Consonants","q":"Which word contains /θ/ in the middle?","o":["author","order","other","adder"],"a":0,"e":"Author contains the voiceless dental fricative /θ/."},
+{"section":"Vowel & Consonant Sounds","area":"Consonants","q":"Which pair differs by /s/ and /z/?","o":["rice / rise","ship / sheep","fan / van","thin / then"],"a":0,"e":"Rice ends with /s/, while rise ends with /z/."},
+{"section":"Vowel & Consonant Sounds","area":"Consonants","q":"Which sound is a voiceless bilabial plosive?","o":["/p/","/b/","/m/","/v/"],"a":0,"e":"/p/ is a voiceless bilabial plosive."},
+{"section":"Vowel & Consonant Sounds","area":"Consonants","q":"Which sound is a voiced alveolar plosive?","o":["/t/","/d/","/k/","/s/"],"a":1,"e":"/d/ is a voiced alveolar plosive."},
+{"section":"Vowel & Consonant Sounds","area":"Clusters","q":"Which word begins with /sl/?","o":["sleep","seep","slip","leap"],"a":0,"e":"Sleep begins with /sl/."},
+{"section":"Vowel & Consonant Sounds","area":"Clusters","q":"Which word begins with /tw/?","o":["twin","tin","win","thin"],"a":0,"e":"Twin begins with /tw/."},
+{"section":"Vowel & Consonant Sounds","area":"Clusters","q":"Which word begins with /dr/?","o":["drink","rink","think","dink"],"a":0,"e":"Drink begins with /dr/."},
+{"section":"Vowel & Consonant Sounds","area":"Clusters","q":"Which word begins with /skw/?","o":["square","scar","share","swear"],"a":0,"e":"Square begins with /skw/."},
+{"section":"Vowel & Consonant Sounds","area":"Clusters","q":"Which word ends with /ft/?","o":["left","let","less","leg"],"a":0,"e":"Left ends with /ft/."},
+{"section":"Vowel & Consonant Sounds","area":"Clusters","q":"Which word ends with /ld/?","o":["cold","coal","code","call"],"a":0,"e":"Cold ends with /ld/."},
+{"section":"Vowel & Consonant Sounds","area":"Clusters","q":"Which word ends with /ks/?","o":["box","bow","boss","bone"],"a":0,"e":"Box ends with /ks/."},
+{"section":"Vowel & Consonant Sounds","area":"Transcription","q":"Which transcription matches 'pen'?","o":["/pɛn/","/piːn/","/pæn/","/pɪn/"],"a":0,"e":"Pen is /pɛn/."},
+{"section":"Vowel & Consonant Sounds","area":"Transcription","q":"Which transcription matches 'sit'?","o":["/siːt/","/sɪt/","/sæt/","/sʌt/"],"a":1,"e":"Sit is /sɪt/."},
+{"section":"Vowel & Consonant Sounds","area":"Transcription","q":"Which transcription matches 'cup'?","o":["/kʊp/","/kʌp/","/kɒp/","/kuːp/"],"a":1,"e":"Cup is /kʌp/."},
+{"section":"Vowel & Consonant Sounds","area":"Transcription","q":"Which transcription matches 'fish'?","o":["/fɪʃ/","/fiːʃ/","/fɪtʃ/","/vɪʃ/"],"a":0,"e":"Fish is /fɪʃ/."},
+{"section":"Vowel & Consonant Sounds","area":"Transcription","q":"Which word matches /tʃiːp/?","o":["cheap","chip","cheep","jeep"],"a":0,"e":"Cheap is /tʃiːp/."},
+{"section":"Vowel & Consonant Sounds","area":"Transcription","q":"Which word matches /laɪt/?","o":["late","light","lit","let"],"a":1,"e":"Light is /laɪt/."},
+{"section":"Vowel & Consonant Sounds","area":"Transcription","q":"Which word matches /pleɪ/?","o":["play","ply","plow","plea"],"a":0,"e":"Play is /pleɪ/."},
+{"section":"Rhyming Words & Word Stress","area":"Rhyming","q":"Which word rhymes with 'green'?","o":["grain","grin","seen","gone"],"a":2,"e":"Green and seen rhyme."},
+{"section":"Rhyming Words & Word Stress","area":"Rhyming","q":"Which word rhymes with 'cold'?","o":["called","sold","could","call"],"a":1,"e":"Cold and sold rhyme in the pronunciation model used here: both contain the final sound pattern /əʊld/."},
+{"section":"Rhyming Words & Word Stress","area":"Rhyming","q":"Which word does NOT rhyme with the others?","o":["day","say","pay","die"],"a":3,"e":"Die has /aɪ/, while day, say and pay have /eɪ/."},
+{"section":"Rhyming Words & Word Stress","area":"Rhyming","q":"Which pair rhymes?","o":["light / night","rough / through","love / move","head / heard"],"a":0,"e":"Light and night rhyme."},
+{"section":"Rhyming Words & Word Stress","area":"Rhyming","q":"Which word rhymes with 'rain'?","o":["reign","ran","ring","run"],"a":0,"e":"Rain and reign have the same pronunciation and rhyme."},
+{"section":"Rhyming Words & Word Stress","area":"Stress","q":"Which word normally has first-syllable stress?","o":["teacher","decide","return","begin"],"a":0,"e":"Teacher normally has primary stress on the first syllable."},
+{"section":"Rhyming Words & Word Stress","area":"Stress","q":"Which word normally has second-syllable stress?","o":["relax","table","window","doctor"],"a":0,"e":"Relax normally has primary stress on the second syllable."},
+{"section":"Rhyming Words & Word Stress","area":"Stress","q":"Which word normally has first-syllable stress?","o":["window","about","allow","arrive"],"a":0,"e":"Window normally has primary stress on the first syllable."},
+{"section":"Rhyming Words & Word Stress","area":"Stress","q":"Which word normally has second-syllable stress?","o":["hotel","table","mother","happy"],"a":0,"e":"Hotel normally has primary stress on the second syllable."},
+{"section":"Rhyming Words & Word Stress","area":"Stress","q":"Which word has two syllables?","o":["window","important","information","education"],"a":0,"e":"Window has two syllables."},
+{"section":"Rhyming Words & Word Stress","area":"Stress","q":"Which word has three syllables?","o":["banana","teacher","school","street"],"a":0,"e":"Banana has three syllables."},
+{"section":"Rhyming Words & Word Stress","area":"Intonation","q":"Which pattern commonly signals completion in a neutral statement?","o":["falling","rising","always level","no pitch"],"a":0,"e":"Falling intonation commonly signals completion in neutral statements."},
+{"section":"Rhyming Words & Word Stress","area":"Intonation","q":"Which pattern is commonly associated with a yes/no question?","o":["rising","falling","always level","no pitch"],"a":0,"e":"Many yes/no questions commonly use rising intonation."},
+{"section":"Rhyming Words & Word Stress","area":"Syllables","q":"How many syllables does 'teacher' have?","o":["1","2","3","4"],"a":1,"e":"Teacher has two syllables."},
+{"section":"Rhyming Words & Word Stress","area":"Syllables","q":"How many syllables does 'pronunciation' have?","o":["3","4","5","6"],"a":2,"e":"Pronunciation is commonly pronounced with five syllables."},
+{"section":"Rhyming Words & Word Stress","area":"Connected Speech","q":"Which process can connect a final consonant to the next word's vowel?","o":["linking","elision","stress shift","capitalisation"],"a":0,"e":"Linking can connect sounds across word boundaries."},
+{"section":"Rhyming Words & Word Stress","area":"Connected Speech","q":"Which process may omit a sound in rapid speech?","o":["elision","linking","rhyme","transcription"],"a":0,"e":"Elision is the omission of a sound in connected speech."},
+{"section":"Rhyming Words & Word Stress","area":"Transcription","q":"Which word matches /kæt/?","o":["cat","cart","cut","coat"],"a":0,"e":"Cat is /kæt/."},
+{"section":"Rhyming Words & Word Stress","area":"Clusters","q":"Which word begins with /kl/?","o":["clean","keen","lean","queen"],"a":0,"e":"Clean begins with /kl/."},
+{"section":"Rhyming Words & Word Stress","area":"Clusters","q":"Which word ends with /nd/?","o":["hand","hat","ham","hang"],"a":0,"e":"Hand ends with /nd/."},
+
+  // Exam Strategy questions are deliberately tied to the final day of Advanced/Exam Master plans.
+  {"section":"Rhyming Words & Word Stress","area":"Exam Strategy","q":"When an Oral English question asks for a word with the same vowel sound, what should you compare first?","o":["the spelling only","the actual vowel sound","the number of letters","the word length"],"a":1,"e":"Compare the actual vowel sound you hear, not just the spelling. English spelling can represent different sounds."},
+  {"section":"Rhyming Words & Word Stress","area":"Exam Strategy","q":"What is the best first step when an Oral English question asks about word stress?","o":["Look for capital letters","Pronounce the word naturally and identify the strongest syllable","Count the written letters","Choose the longest word"],"a":1,"e":"Pronounce the word normally and identify its most prominent syllable. Stress should be recognised from pronunciation, not capitalization."},
+  {"section":"Rhyming Words & Word Stress","area":"Exam Strategy","q":"If two answer choices are both possible at first glance, what is a useful exam technique?","o":["Guess immediately","Use elimination and compare the remaining sounds carefully","Choose the first option","Skip every difficult question"],"a":1,"e":"Elimination reduces the choices, after which you can compare the remaining sounds or stress patterns more carefully."},
+  {"section":"Rhyming Words & Word Stress","area":"Exam Strategy","q":"What should you do after a full test if you want to improve efficiently?","o":["Ignore wrong answers","Study the areas where you lost marks and practise them","Repeat the exact same answers without review","Only study topics you already know"],"a":1,"e":"Use the result to identify weak areas, review those lessons and complete focused practice before retesting."},
+  {"section":"Rhyming Words & Word Stress","area":"Exam Strategy","q":"Why should you avoid relying on spelling in Oral English questions?","o":["Spelling always changes","Letters do not always represent the same speech sound","Spelling is never useful","Every word has the same pronunciation"],"a":1,"e":"English spelling is not a one-to-one guide to pronunciation, so Oral English requires attention to the speech sounds themselves."}
+];
+
+// Remove intentionally invalid draft item.
+questionBank.splice(17,1);
+
+let selectedPlan=null, selectedExam=1, selectedCount=null, questions=[], answers=[], current=0;
+
+function validateQuestionBank(){
+  const problems=[];
+  const seen=new Set();
+  questionBank.forEach((q,i)=>{
+    if(!q || !q.q || !Array.isArray(q.o) || q.o.length!==4 || !Number.isInteger(q.a) || q.a<0 || q.a>=q.o.length || !q.e){
+      problems.push(`Question ${i+1}: invalid structure, answer index or explanation.`);
+    }
+    if(q && seen.has(q.q)) problems.push(`Question ${i+1}: duplicate question text.`);
+    if(q) seen.add(q.q);
+    if(q && /[A-Z]{2,}/.test(q.o.join(" "))) problems.push(`Question ${i+1}: option capitalization may reveal the stress answer.`);
+  });
+  if(problems.length) console.warn("Question bank verification:",problems);
+  return problems;
+}
+
+let candidateName="", candidateEmail="", secondsLeft=0, timerInterval=null, submitted=false;
+// Online performance-report service.
+// After deploying the included Google Apps Script, paste its Web App URL here.
+const PERFORMANCE_API_URL = "PASTE_YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE";
+// Use the same deployed Google Apps Script Web App URL for payment verification.
+const PAYMENT_API_URL = "PASTE_YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE";
+
+function getPerformanceHistory(){
+  try { return JSON.parse(localStorage.getItem("oralEnglishPerformance") || "[]"); }
+  catch(e){ return []; }
+}
+function savePerformanceRecord(record){
+  const history=getPerformanceHistory();
+  history.push(record);
+  localStorage.setItem("oralEnglishPerformance", JSON.stringify(history.slice(-200)));
+}
+function getDateKey(d){
+  const x=new Date(d);
+  return `${x.getFullYear()}-${String(x.getMonth()+1).padStart(2,"0")}-${String(x.getDate()).padStart(2,"0")}`;
+}
+function getWeekStart(d){
+  const x=new Date(d);
+  const day=x.getDay();
+  const diff=(day+6)%7;
+  x.setDate(x.getDate()-diff);
+  return getDateKey(x);
+}
+function averageOf(records){
+  if(!records.length) return 0;
+  return Math.round(records.reduce((sum,r)=>sum+(r.percentage||0),0)/records.length);
+}
+function aggregateAreas(records){
+  const out={};
+  records.forEach(r=>{
+    Object.entries(r.areas||{}).forEach(([area,v])=>{
+      if(!out[area]) out[area]={correct:0,total:0};
+      out[area].correct+=v.correct||0;
+      out[area].total+=v.total||0;
+    });
+  });
+  return Object.entries(out).map(([area,v])=>({
+    area, correct:v.correct,total:v.total,
+    percentage:v.total?Math.round(v.correct/v.total*100):0
+  })).sort((a,b)=>a.percentage-b.percentage);
+}
+function performanceSummary(records){
+  const areas=aggregateAreas(records);
+  return {
+    average:averageOf(records),
+    strongest:areas.length?areas.slice().sort((a,b)=>b.percentage-a.percentage)[0]:null,
+    weakest:areas[0]||null
+  };
+}
+async function syncPerformanceRecord(record){
+  if(!PERFORMANCE_API_URL || PERFORMANCE_API_URL.includes("PASTE_YOUR_")){
+    return;
+  }
+  try{
+    await fetch(PERFORMANCE_API_URL,{
+      method:"POST",
+      mode:"no-cors",
+      headers:{"Content-Type":"text/plain;charset=utf-8"},
+      body:JSON.stringify(record)
+    });
+  }catch(e){
+    console.warn("Performance sync unavailable:",e);
+  }
+}
+function recordPerformance(score, areas, type, totalOverride){
+  const total=(typeof totalOverride==="number") ? totalOverride : questions.length;
+  const record={
+    id:"test_"+Date.now()+"_"+Math.random().toString(36).slice(2,8),
+    timestamp:new Date().toISOString(),
+    name:candidateName,
+    email:candidateEmail,
+    package:getTestPackageKey(),
+    packageName:plans[getTestPackageKey()]?.name || "Test",
+    exam:selectedExam,
+    questionCount:total,
+    score,
+    percentage:total?Math.round(score/total*100):0,
+    type:type||"full_test",
+    areas
+  };
+  savePerformanceRecord(record);
+  syncPerformanceRecord(record);
+}
+function openPerformancePage(){
+  loadSavedAccount();
+  showPage("performancePage");
+  renderPerformanceDashboard();
+}
+function renderPerformanceDashboard(){
+  const currentEmail=localStorage.getItem("oralEnglishCurrentUser");
+  const notice=document.getElementById("performanceAccountNotice");
+  if(!currentEmail){
+    notice.innerHTML="<strong>Sign in first.</strong> Your performance history is linked to your candidate account.";
+    document.getElementById("dailyPerformance").innerHTML='<div class="performance-empty">Sign in to view your performance.</div>';
+    document.getElementById("weeklyPerformance").innerHTML='<div class="performance-empty">Sign in to view your performance.</div>';
+    document.getElementById("recentPerformance").innerHTML='<div class="performance-empty">Sign in to view your performance.</div>';
+    return;
+  }
+  const history=getPerformanceHistory().filter(r=>r.email===candidateEmail);
+  const now=new Date();
+  const today=getDateKey(now);
+  const week=getWeekStart(now);
+  const todayRecords=history.filter(r=>getDateKey(r.timestamp)===today);
+  const weekRecords=history.filter(r=>getWeekStart(r.timestamp)===week);
+
+  const fullTests=history.filter(r=>r.type==="full_test");
+  document.getElementById("perfTests").textContent=fullTests.length;
+  document.getElementById("perfAverage").textContent=averageOf(fullTests)+"%";
+  document.getElementById("perfToday").textContent=todayRecords.length;
+  document.getElementById("perfWeek").textContent=weekRecords.length;
+
+  const daily=performanceSummary(todayRecords);
+  document.getElementById("dailyPerformance").innerHTML=todayRecords.length
+    ? `<div class="performance-row"><div><strong>Today's average</strong><div class="performance-bar"><span style="width:${daily.average}%"></span></div></div><strong>${daily.average}%</strong></div>
+       <div class="performance-row"><div><strong>Tests completed</strong></div><strong>${todayRecords.length}</strong></div>
+       <div class="performance-row"><div><strong>Weakest area</strong></div><strong>${daily.weakest?daily.weakest.area:"Not enough data"}</strong></div>`
+    : '<div class="performance-empty">No tests recorded today yet. Complete a test to start your daily review.</div>';
+
+  const weekly=performanceSummary(weekRecords);
+  const previousWeekStart=new Date(week); previousWeekStart.setDate(previousWeekStart.getDate()-7);
+  const previousWeek=getWeekStart(previousWeekStart);
+  const previousWeekRecords=history.filter(r=>getWeekStart(r.timestamp)===previousWeek);
+  const previousAverage=averageOf(previousWeekRecords);
+  const change=weekRecords.length&&previousWeekRecords.length?weekly.average-previousAverage:null;
+  const weak=weekly.weakest, strong=weekly.strongest;
+  document.getElementById("weeklyPerformance").innerHTML=weekRecords.length
+    ? `<div class="performance-row"><div><strong>Weekly average</strong><div class="performance-bar"><span style="width:${weekly.average}%"></span></div></div><strong>${weekly.average}%</strong></div>
+       <div class="performance-row"><div><strong>Strongest area</strong></div><strong>${strong?strong.area+" ("+strong.percentage+"%)":"Not enough data"}</strong></div>
+       <div class="performance-row"><div><strong>Area needing most work</strong></div><strong>${weak?weak.area+" ("+weak.percentage+"%)":"Not enough data"}</strong></div>
+       <div class="performance-row"><div><strong>Recommended action</strong></div><strong>${weak?"Review "+weak.area+" and take its topic quiz.":"Keep studying and testing."}</strong></div>
+       <div class="performance-row"><div><strong>Compared with last week</strong></div><strong>${change===null?"Not enough previous-week data":change>0?"↑ "+change+" percentage points":change<0?"↓ "+Math.abs(change)+" percentage points":"No change"}</strong></div>`
+    : '<div class="performance-empty">No tests recorded this week yet.</div>';
+
+  const recent=history.slice().sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp)).slice(0,8);
+  document.getElementById("recentPerformance").innerHTML=recent.length
+    ? recent.map(r=>`<div class="performance-row"><div><strong>${r.packageName}</strong><br><small>${new Date(r.timestamp).toLocaleString()} • ${r.type==="topic_quiz"?"Topic quiz":"Full test"}</small></div><strong>${r.score}/${r.questionCount} (${r.percentage}%)</strong></div>`).join("")
+    : '<div class="performance-empty">Your completed tests will appear here.</div>';
+}
+
+
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo({top:0,behavior:"smooth"});
+  if(id==="contactPage") loadPublicComments();
+  if(id==="homePage"){ refreshHomeAccount(); refreshStudentPaymentStatus(); }
+}
+
+function renderPlans(){
+  const grid=document.getElementById('planGrid');
+  grid.innerHTML=Object.entries(plans).map(([key,p])=>`
+    <div class="card plan ${selectedPlan===key?'selected':''}" onclick="choosePlan('${key}')">
+      ${key==='standard'?'<span class="badge">POPULAR</span>':''}
+      <h3>${p.name}</h3><div class="price">${p.price}</div>
+      <p><strong>Difficulty:</strong> ${p.level}</p>
+      <p><strong>Exams:</strong> ${p.examCount}</p>
+      <ul>${p.assistance.split(' + ').map(x=>`<li>${x}</li>`).join('')}</ul>
+    </div>`).join('');
+}
+function choosePlan(key){
+  selectedPlan=key; selectedExam=1; selectedCount=plans[key].options[0];
+  renderPlans();
+  const p=plans[key];
+  const paid=hasPaidPackage("test",key);
+  document.getElementById('planSummary').innerHTML=`<strong>${p.name}</strong> — ${p.price}. ${p.examCount} exam${p.examCount>1?'s':''}; ${key==='trial'||paid?'choose your exam and question count next.':'payment is required before starting this package.'}`;
+  document.getElementById('continuePlanBtn').disabled=false;
+  document.getElementById('continuePlanBtn').textContent=(key==='trial'||paid)?'Continue →':'Bank Transfer →';
+}
+async function continueFromPlan(){
+  if(!selectedPlan) return;
+  if(selectedPlan!=="trial" && !hasPaidPackage("test",selectedPlan)){
+    openBankTransferModal("test",selectedPlan);
+    return;
+  }
+  goToExamChoice();
+}
+function goToExamChoice(){
+  if(!selectedPlan)return;
+  renderExamChoices(); renderQuestionChoices(); updateExamSummary(); showPage('examPage');
+}
+function renderExamChoices(){
+  const n=plans[selectedPlan].examCount;
+  document.getElementById('examChoices').innerHTML=Array.from({length:n},(_,i)=>`
+    <button class="choice ${selectedExam===i+1?'selected':''}" onclick="selectExam(${i+1})">
+      <strong>Exam ${i+1}</strong><small>Different question selection</small>
+    </button>`).join('');
+}
+function selectExam(n){selectedExam=n;renderExamChoices();updateExamSummary()}
+function getPackageMinutes(planKey,count){
+  const map={
+    trial:{10:5},
+    basic:{20:8,30:12,40:16},
+    standard:{30:12,50:20,60:24},
+    advanced:{40:16,60:24,75:30},
+    mock:{50:20,75:30,100:40}
+  };
+  return (map[planKey] && map[planKey][count]) || Math.ceil(count*.4);
+}
+function renderQuestionChoices(){
+  document.getElementById('questionChoices').innerHTML=plans[selectedPlan].options.map(n=>{
+    const mins=getPackageMinutes(selectedPlan,n);
+    return `<button class="choice ${selectedCount===n?'selected':''}" onclick="selectCount(${n})"><strong>${n} questions</strong><small>${mins} minutes</small></button>`;
+  }).join('');
+}
+function selectCount(n){selectedCount=n;renderQuestionChoices();updateExamSummary()}
+function updateExamSummary(){
+  const mins=getPackageMinutes(selectedPlan,selectedCount);
+  document.getElementById('examSummary').innerHTML=`<strong>${plans[selectedPlan].name} • Exam ${selectedExam}</strong><br>${selectedCount} questions • ${mins} minutes • Section A first, Section B second.`;
+}
+function goToAccount(mode){showPage("candidatePage");showAccountForm(mode==="register"?"register":"login");loadSavedAccount();window.scrollTo({top:0,behavior:"smooth"});}
+function refreshHomeAccount(){const currentEmail=localStorage.getItem("oralEnglishCurrentUser");const accounts=JSON.parse(localStorage.getItem("oralEnglishAccounts")||"{}");const account=currentEmail?accounts[currentEmail]:null;const out=document.getElementById("homeSignedOut"),inn=document.getElementById("homeSignedIn");if(!out||!inn)return;if(account){document.getElementById("homeUserName").textContent=account.name;out.style.display="none";inn.style.display="flex"}else{out.style.display="flex";inn.style.display="none";const box=document.getElementById("studentPaymentStatus");if(box)box.style.display="none"}}
+function goToCandidate(){
+  loadSavedAccount();
+  showPage('candidatePage');
+}
+function showAccountForm(type){
+  const register=type==='register';
+  document.getElementById('registerForm').style.display=register?'block':'none';
+  document.getElementById('loginForm').style.display=register?'none':'block';
+  document.getElementById('registerTab').classList.toggle('active',register);
+  document.getElementById('loginTab').classList.toggle('active',!register);
+}
+async function hashPassword(password){
+  const data=new TextEncoder().encode(password);
+  const hash=await crypto.subtle.digest('SHA-256',data);
+  return Array.from(new Uint8Array(hash)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+async function registerAccount(){
+  const name=document.getElementById('registerName').value.trim();
+  const email=document.getElementById('registerEmail').value.trim().toLowerCase();
+  const password=document.getElementById('registerPassword').value;
+  const confirm=document.getElementById('registerPassword2').value;
+  const err=document.getElementById('registerError');
+  err.textContent="";
+  if(!name||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){err.textContent="Please enter a valid name and email address.";return}
+  if(password.length<6){err.textContent="Password must be at least 6 characters.";return}
+  if(password!==confirm){err.textContent="The passwords do not match.";return}
+  const accounts=JSON.parse(localStorage.getItem('oralEnglishAccounts')||'{}');
+  if(accounts[email]){err.textContent="An account with this email already exists. Please sign in instead.";showAccountForm('login');document.getElementById('loginEmail').value=email;return}
+  accounts[email]={name,email,passwordHash:await hashPassword(password)};
+  localStorage.setItem('oralEnglishAccounts',JSON.stringify(accounts));
+  localStorage.setItem('oralEnglishCurrentUser',email);
+  candidateName=name; candidateEmail=email;
+  loadSavedAccount(); refreshHomeAccount(); syncApprovedPackages();
+}
+async function loginAccount(){
+  const email=document.getElementById('loginEmail').value.trim().toLowerCase();
+  const password=document.getElementById('loginPassword').value;
+  const err=document.getElementById('loginError');
+  err.textContent="";
+  const accounts=JSON.parse(localStorage.getItem('oralEnglishAccounts')||'{}');
+  if(!accounts[email]){err.textContent="No account was found with that email. Please create an account first.";return}
+  const passwordHash=await hashPassword(password);
+  if(accounts[email].passwordHash!==passwordHash){err.textContent="Incorrect email or password.";return}
+  localStorage.setItem('oralEnglishCurrentUser',email);
+  candidateName=accounts[email].name; candidateEmail=accounts[email].email;
+  loadSavedAccount(); refreshHomeAccount();
+}
+function loadSavedAccount(){
+  const currentEmail=localStorage.getItem('oralEnglishCurrentUser');
+  const accounts=JSON.parse(localStorage.getItem('oralEnglishAccounts')||'{}');
+  const account=currentEmail?accounts[currentEmail]:null;
+  const logged=document.getElementById('loggedInBox');
+  const forms=document.getElementById('accountForms');
+  if(account){
+    candidateName=account.name; candidateEmail=account.email;
+    document.getElementById('loggedInName').textContent=account.name;
+    document.getElementById('loggedInEmail').textContent=account.email;
+    logged.style.display='block'; forms.style.display='none';
+  }else{
+    logged.style.display='none'; forms.style.display='block';
+  }
+}
+function logoutAccount(){
+  localStorage.removeItem('oralEnglishCurrentUser');
+  candidateName=""; candidateEmail="";
+  document.getElementById('registerPassword').value="";
+  document.getElementById('registerPassword2').value="";
+  document.getElementById('loginPassword').value="";
+  loadSavedAccount(); refreshHomeAccount();
+}
+function seededShuffle(arr,seed){
+  const a=[...arr]; let s=seed;
+  for(let i=a.length-1;i>0;i--){s=(s*9301+49297)%233280;const j=Math.floor((s/233280)*(i+1));[a[i],a[j]]=[a[j],a[i]]}
+  return a;
+}
+function buildQuestions(){
+  const tierSeed={trial:17,difficult:101,"more difficult":202,"very difficult":303,"highest exam-style":404};
+  const level=plans[selectedPlan].level;
+  const seed=(tierSeed[level]||17)+selectedExam*97+selectedCount*13;
+
+  // Keep Section A first and Section B second.
+  const a=seededShuffle(questionBank.filter(x=>x.section==="Vowel & Consonant Sounds"),seed);
+  const b=seededShuffle(questionBank.filter(x=>x.section==="Rhyming Words & Word Stress"),seed+77);
+
+  const total=Math.min(selectedCount, questionBank.length);
+  let aCount=Math.ceil(total/2);
+  let bCount=total-aCount;
+
+  // If one section cannot supply its share, move the unused slots to the other section.
+  if(aCount>a.length){ bCount+=aCount-a.length; aCount=a.length; }
+  if(bCount>b.length){ aCount+=bCount-b.length; bCount=b.length; }
+
+  const picked=[
+    ...a.slice(0,aCount),
+    ...b.slice(0,bCount)
+  ];
+
+  // Keep question order varied while preserving Section A before Section B.
+  const finalA=seededShuffle(picked.filter(x=>x.section==="Vowel & Consonant Sounds"),seed+11);
+  const finalB=seededShuffle(picked.filter(x=>x.section==="Rhyming Words & Word Stress"),seed+22);
+  return [...finalA,...finalB].slice(0,total);
+}
+function startTest(){
+  if(!candidateName||!candidateEmail){
+    loadSavedAccount();
+    return;
+  }
+  questions=buildQuestions(); answers=Array(questions.length).fill(null); current=0; submitted=false;
+  secondsLeft=getPackageMinutes(selectedPlan,selectedCount)*60;
+  document.getElementById('quizTitle').textContent=`${plans[selectedPlan].name} • Exam ${selectedExam}`;
+  showPage('quizPage'); renderQuestion(); startTimer();
+}
+function startTimer(){
+  clearInterval(timerInterval); updateTimer();
+  timerInterval=setInterval(()=>{secondsLeft--;updateTimer();if(secondsLeft<=0){clearInterval(timerInterval);autoSubmit()}},1000);
+}
+function updateTimer(){
+  const el=document.getElementById('timer');const m=Math.floor(Math.max(0,secondsLeft)/60),s=Math.max(0,secondsLeft)%60;
+  el.textContent=`${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  el.classList.toggle('warning',secondsLeft<=60);
+}
+function getSelectedMinutes(){
+  const p=plans[selectedPlan];
+  const map={
+    trial:{10:5},
+    basic:{20:8,30:12,40:16},
+    standard:{30:12,50:20,60:24},
+    advanced:{40:16,60:24,75:30},
+    mock:{50:20,75:30,100:40}
+  };
+  return (map[selectedPlan] && map[selectedPlan][selectedCount]) || Math.ceil(selectedCount*.4);
+}
+function renderQuestion(){
+  const area=document.getElementById("questionArea");
+  if(!area || !Array.isArray(questions) || !questions.length){
+    if(area) area.innerHTML='<div class="question"><h3>No active test questions found.</h3></div>';
+    return;
+  }
+  if(!Array.isArray(answers) || answers.length!==questions.length)
+    answers=Array(questions.length).fill(null);
+
+  const answered=answers.filter(a=>a!==null && a!==undefined).length;
+  const fill=document.getElementById("progressFill");
+  if(fill) fill.style.width=(answered/questions.length*100)+"%";
+
+  const numbers=questions.map((q,qi)=>`
+    <button type="button"
+      class="q-number ${answers[qi]!==null && answers[qi]!==undefined ? "answered":"unanswered"}"
+      id="qnum-${qi}"
+      aria-label="Question ${qi+1} ${answers[qi]!==null && answers[qi]!==undefined ? "answered":"unanswered"}"
+      onclick="jumpToQuestion(${qi})">${qi+1}</button>
+  `).join("");
+
+  area.innerHTML=`
+    <div class="scroll-test-intro">
+      <strong>Answer all questions below.</strong>
+      <span>Scroll freely through the test. Use the question numbers to jump directly to any question.</span>
+    </div>
+
+    <div class="question-navigator" id="questionNavigator">
+      <h4>Question Navigator</h4>
+      <div class="question-numbers">${numbers}</div>
+      <div class="q-legend">
+        <span><i class="q-dot answered"></i> Answered</span>
+        <span><i class="q-dot unanswered"></i> Not answered</span>
+        <strong id="scrollAnswered">${answered} of ${questions.length} answered</strong>
+      </div>
+    </div>
+
+    ${questions.map((q,qi)=>`
+      <div class="question scroll-question" id="question-${qi}">
+        <div class="section-label">${q.section||""} • Question ${qi+1} of ${questions.length}</div>
+        <h3>${qi+1}. ${q.q||""}</h3>
+        <div class="options">${(q.o||[]).map((opt,i)=>`
+          <label class="option">
+            <input type="radio" name="answer-${qi}" value="${i}"
+              ${answers[qi]===i?"checked":""}
+              onchange="saveAnswer(${qi},${i})">
+            <span><strong>${String.fromCharCode(65+i)}.</strong> ${opt}</span>
+          </label>
+        `).join("")}</div>
+      </div>
+    `).join("")}
+
+    <div class="scroll-test-submit" id="submitAfterLastQuestion">
+      <div>
+        <strong id="finalAnswered">${answered} of ${questions.length} answered</strong>
+        <small>You've reached the end of the test. Review any unanswered questions above, then submit.</small>
+      </div>
+      <button type="button" class="primary" onclick="submitFromScroll(event)">Submit Test ✓</button>
+    </div>`;
+
+  const prev=document.getElementById("prevBtn"), next=document.getElementById("nextBtn");
+  if(prev) prev.style.display="none";
+  if(next) next.style.display="none";
+}
+function saveAnswer(questionIndex,answerIndex){
+  if(!Array.isArray(answers) || answers.length!==questions.length)
+    answers=Array(questions.length).fill(null);
+
+  answers[questionIndex]=Number(answerIndex);
+
+  const answered=answers.filter(a=>a!==null && a!==undefined).length;
+  const fill=document.getElementById("progressFill");
+  if(fill && questions.length) fill.style.width=(answered/questions.length*100)+"%";
+
+  const counter=document.getElementById("scrollAnswered");
+  if(counter) counter.textContent=`${answered} of ${questions.length} answered`;
+  const finalCounter=document.getElementById("finalAnswered");
+  if(finalCounter) finalCounter.textContent=`${answered} of ${questions.length} answered`;
+
+  questions.forEach((q,i)=>{
+    const btn=document.getElementById(`qnum-${i}`);
+    if(btn){
+      btn.classList.toggle("answered",answers[i]!==null && answers[i]!==undefined);
+      btn.classList.toggle("unanswered",answers[i]===null || answers[i]===undefined);
+      btn.setAttribute("aria-label",`Question ${i+1} ${answers[i]!==null && answers[i]!==undefined ? "answered":"unanswered"}`);
+    }
+  });
+}
+function jumpToQuestion(i){
+  const el=document.getElementById("question-"+i);
+  if(!el) return;
+  el.scrollIntoView({behavior:"smooth",block:"start"});
+  document.querySelectorAll(".q-number").forEach(btn=>btn.classList.remove("current"));
+  const num=document.getElementById(`qnum-${i}`);
+  if(num) num.classList.add("current");
+}
+function previousQuestion(){ return; }
+function nextQuestion(){ return submitFromScroll(); }
+
+function submitFromScroll(event){
+  if(event) event.preventDefault();
+  if(!Array.isArray(questions) || !questions.length){
+    alert("There is no active test to submit.");
+    return false;
+  }
+  if(!Array.isArray(answers) || answers.length!==questions.length)
+    answers=Array(questions.length).fill(null);
+  if(typeof submitted!=="undefined" && submitted) return false;
+
+  const unanswered=answers.filter(a=>a===null || a===undefined).length;
+  if(unanswered>0){
+    const firstUnanswered=answers.findIndex(a=>a===null || a===undefined);
+    const proceed=confirm(
+      `You have ${unanswered} unanswered question${unanswered===1?"":"s"}. Submit anyway?`
+    );
+    if(!proceed){
+      if(firstUnanswered>=0) jumpToQuestion(firstUnanswered);
+      return false;
+    }
+  }
+
+  submitTest(false);
+  return false;
+}
+// Scroll-through test mode: keep the selected answer without rerendering the whole test.
+  
+function autoSubmit(){if(!submitted)submitTest(true)}
+function submitTest(timeUp){
+  if(typeof submitted!=="undefined" && submitted) return;
+  if(!Array.isArray(questions) || !questions.length){
+    alert("There is no active test to submit.");
+    return;
+  }
+  if(!Array.isArray(answers) || answers.length!==questions.length)
+    answers=Array(questions.length).fill(null);
+
+  submitted=true;
+  if(typeof timerInterval!=="undefined" && timerInterval) clearInterval(timerInterval);
+
+  let score=0;
+  const areas={};
+  questions.forEach((q,i)=>{
+    const area=q.area||q.section||"General";
+    if(!areas[area]) areas[area]={correct:0,total:0};
+    areas[area].total++;
+    if(answers[i]===q.a){
+      score++;
+      areas[area].correct++;
+    }
+  });
+
+  if(typeof recordPerformance==="function"){
+    try{recordPerformance(score,areas,"full_test");}
+    catch(err){console.warn("Performance record failed:",err);}
+  }
+  if(typeof showResult==="function") showResult(score,areas,timeUp);
+  else alert(`Test submitted. Score: ${score}/${questions.length}`);
+}
+function showResult(score,areas,timeUp){
+  const pass=questions.length===20 ? score>=15 : score/questions.length>=0.75;
+  document.getElementById('resultIntro').textContent=`${candidateName} • ${plans[selectedPlan].name} • Exam ${selectedExam}`;
+  document.getElementById('resultScore').textContent=`${score} / ${questions.length}`;
+  document.getElementById('resultScore').className="result-score "+(score/questions.length>=.75?"pass":"fail");
+  document.getElementById('resultStatus').innerHTML=timeUp?`<strong>Time is up.</strong> Your test was submitted automatically. ${questions.length===20?(pass?"You reached the 15/20 pass mark.":"The 15/20 pass mark was not reached."):(pass?"You reached the 75% pass standard.":"The 75% pass standard was not reached.")}`:"Your test has been submitted and marked.";
+  renderAreas(areas); renderStudy(areas); renderReview();
+  showPage('resultPage');
+  renderPostTestLearning(score,questions.length);
+}
+function renderAreas(areas){
+  const eligible=selectedPlan!=="trial";
+  if(!eligible){document.getElementById('areas').innerHTML="<p>Your basic result shows the areas that need attention. Upgrade to Premium for deeper area analysis.</p>";return}
+  document.getElementById('areas').innerHTML=Object.entries(areas).map(([name,x])=>{
+    const pct=Math.round(x.correct/x.total*100);return `<div class="area"><strong>${name}</strong><small>${x.correct}/${x.total} correct • ${pct}%</small></div>`;
+  }).join('');
+}
+function renderStudy(areas){
+  const eligible=["standard","advanced","mock"].includes(selectedPlan);
+  if(!eligible){document.getElementById('studyPlan').innerHTML="<p>A personalised study plan is included in Premium Standard, Premium Advanced and Premium Mock Exam.</p>";return}
+  const weak=Object.entries(areas).sort((a,b)=>a[1].correct/a[1].total-b[1].correct/b[1].total).slice(0,3);
+  document.getElementById('studyPlan').innerHTML=weak.map(([name],i)=>`<div class="area"><strong>Day ${i+1}: ${name}</strong><small>Review the ${name} lesson, write 10 examples, then complete 15 focused practice questions.</small></div>`).join('');
+}
+function renderReview(){
+  const detailed=["basic","standard","advanced","mock"].includes(selectedPlan);
+  if(!detailed){document.getElementById('review').innerHTML="<p>Detailed answer explanations are available from Premium Basic upward.</p>";return}
+  document.getElementById('review').innerHTML=questions.map((q,i)=>{
+    const ok=answers[i]===q.a;
+    return `<div class="review-item ${ok?'correct':'wrong'}"><strong>${i+1}. ${ok?'Correct':'Incorrect'}</strong><div>${q.q}</div><p><strong>Correct answer:</strong> ${q.o[q.a]}<br><strong>Explanation:</strong> ${q.e}</p></div>`;
+  }).join('');
+}
+function retake(){showPage('plansPage');renderPlans()}
+renderPlans();loadSavedAccount();validateQuestionBank();
+
+
+
+
+const packageLearningSupport = {
+  trial:{
+    name:"Free Trial",
+    detail:"Score summary and a simple indication of the topics that need more attention.",
+    plan:["Review the lesson connected to your weakest topic.","Complete the topic mini-quiz before retaking the test.","Move to a paid test package when you are ready for deeper feedback."]
+  },
+  basic:{
+    name:"Premium Basic",
+    detail:"Your result includes correct answers and explanations so you can understand what you missed.",
+    plan:["Review every missed question.","Study the related lesson carefully.","Take the topic quiz for each weak area.","Retake a different exam to check improvement."]
+  },
+  standard:{
+    name:"Premium Standard",
+    detail:"Your result includes explanations, weak-area analysis and Areas of Concentration.",
+    plan:["Start with your top Area of Concentration.","Study that lesson and complete its topic quiz.","Review your second-weakest topic.","Take another exam and compare your progress."]
+  },
+  advanced:{
+    name:"Premium Advanced",
+    detail:"Your result includes detailed explanations, weak-area analysis and a personalized study plan.",
+    plan:["Follow the personalized weekly study sequence.","Complete lesson → topic quiz → full test for each weak area.","Use the explanations to correct recurring mistakes.","Retest after completing the study plan."]
+  },
+  mock:{
+    name:"Premium Mock Exam",
+    detail:"Your result includes full analysis, detailed explanations, a study plan and a detailed performance report.",
+    plan:["Study all identified weak areas.","Complete topic quizzes before another mock.","Use the performance report to target recurring errors.","Take another mock only after reviewing your study plan."]
+  }
+};
+
+function getTestPackageKey(){
+  return (typeof selectedPlan !== "undefined" && selectedPlan) ? selectedPlan : "trial";
+}
+
+function getWeakAreasForResult(){
+  if(typeof answers === "undefined" || typeof questions === "undefined") return [];
+  const misses = {};
+  questions.forEach((q,i)=>{
+    if(answers[i] !== q.a){
+      misses[q.area] = (misses[q.area] || 0) + 1;
+    }
+  });
+  return Object.entries(misses).sort((a,b)=>b[1]-a[1]).map(x=>x[0]);
+}
+
+function renderPostTestLearning(score,total){
+  const box = document.getElementById("postTestLearning");
+  if(!box) return;
+
+  const key = getTestPackageKey();
+  const support = packageLearningSupport[key] || packageLearningSupport.trial;
+  const weak = getWeakAreasForResult();
+  const areas = weak.length ? weak.slice(0,4) : ["General Oral English"];
+
+  box.innerHTML = `
+    <div class="learning-recommendation">
+      <span class="eyebrow">YOUR NEXT STEP</span>
+      <h3>Don't stop at your score — learn, practise and retest.</h3>
+      <p><strong>${support.name}</strong>: ${support.detail}</p>
+
+      <div class="recommendation-grid">
+        ${areas.map(area=>`
+          <div class="recommendation-card">
+            <h4>📖 ${area}</h4>
+            <p>Review this lesson, then test what you learnt with a topic quiz.</p>
+            <button class="btn primary" onclick="startTopicQuiz('${String(area).replace(/'/g,"\\'")}')">Take Topic Quiz</button>
+          </div>`).join("")}
+      </div>
+
+      <div class="study-plan">
+        <h4>🎯 Recommended Study Plan</h4>
+        <ol>${support.plan.map(x=>`<li>${x}</li>`).join("")}</ol>
+      </div>
+
+      <div class="recommendation-card" style="margin-top:16px">
+        <h4>💡 Need more support?</h4>
+        <p>Your current test package is <strong>${support.name}</strong>. Higher packages provide deeper explanations, analysis and study guidance.</p>
+        <button class="btn primary" onclick="showPage('plansPage')">View Test Packages</button>
+        <button class="btn ghost" onclick="showPage('lessonPlansPage')">View Lesson Packages</button>
+      </div>
+    </div>`;
+}
+
+function startTopicQuiz(area){
+  const lessonIndex = lessons.findIndex(l=>l.title.toLowerCase() === String(area).toLowerCase());
+  showPage("topicQuizPage");
+  const box = document.getElementById("topicQuizBox");
+  const title = document.getElementById("topicQuizTitle");
+  const intro = document.getElementById("topicQuizIntro");
+
+  const pool = questionBank.filter(q=>q.area === area);
+  const selected = pool.length ? pool.slice(0,Math.min(5,pool.length)) : questionBank.slice(0,5);
+
+  title.textContent = `${area} — Topic Quiz`;
+  intro.textContent = lessonIndex >= 0
+    ? "You have studied this topic. Now check what you remember before moving on."
+    : "Check your understanding before returning to the full test.";
+
+  let i=0, score=0;
+  window._topicQuizChosenAnswers=[];
+  function draw(){
+    const q=selected[i];
+    box.innerHTML = `
+      <div class="topic-quiz-card">
+        <div class="muted">Question ${i+1} of ${selected.length}</div>
+        <h3>${q.q}</h3>
+        ${q.o.map((op,j)=>`<button class="topic-quiz-option" onclick="answerTopicQuiz(${j})">${String.fromCharCode(65+j)}. ${op}</button>`).join("")}
+      </div>`;
+    window._topicQuizAnswer = answerTopicQuiz;
+  }
+  window.answerTopicQuiz = function(choice){
+    const q=selected[i];
+    window._topicQuizChosenAnswers[i]=Number(choice);
+    if(choice===q.a) score++;
+    i++;
+    if(i<selected.length){ draw(); }
+    else{
+      const pct=Math.round(score/selected.length*100);
+      const quizAreas={};
+      selected.forEach((q,idx)=>{
+        const area=q.area||"General";
+        if(!quizAreas[area]) quizAreas[area]={correct:0,total:0};
+        quizAreas[area].total++;
+        if(idx < selected.length && q.a === window._topicQuizChosenAnswers?.[idx]) quizAreas[area].correct++;
+      });
+      try{ recordPerformance(score,quizAreas,"topic_quiz",selected.length); }catch(e){ console.warn("Topic quiz performance record failed:",e); }
+      try{
+        const history=JSON.parse(localStorage.getItem("oralEnglishTopicQuizHistory")||"[]");
+        history.push({topic:area,topicIndex:lessonIndex,score,total:selected.length,percentage:pct,timestamp:new Date().toISOString()});
+        localStorage.setItem("oralEnglishTopicQuizHistory",JSON.stringify(history.slice(-200)));
+      }catch(e){}
+      box.innerHTML=`
+        <div class="topic-quiz-card topic-quiz-result">
+          <span class="eyebrow">TOPIC RESULT</span>
+          <h2>${score}/${selected.length} (${pct}%)</h2>
+          <p>${pct>=75
+            ? "Excellent. You are ready to continue to another topic or take a full exam."
+            : "Keep studying this topic. Review the lesson, then try the topic quiz again before your next full exam."}</p>
+          <button class="btn primary" onclick="${pct>=75 ? "showPage('examPage')" : `openLesson(${Math.max(0,lessonIndex)})`}">${pct>=75 ? "Take a Full Test" : "Review Lesson"}</button>
+          <button class="btn ghost" onclick="showPage('learnPage')">Continue Learning</button>
+        </div>`;
+    }
+  };
+  draw();
+}
+
+
+const dailyStudyPlans = {
+  preview:[
+    {day:1,topics:[0],focus:"Vowel Sounds"},
+    {day:2,topics:[1],focus:"Consonant Sounds"}
+  ],
+  foundation:[
+    {day:1,topics:[0],focus:"Vowel Sounds"},
+    {day:2,topics:[1],focus:"Consonant Sounds"},
+    {day:3,topics:[7],focus:"Syllables"},
+    {day:4,topics:[5],focus:"Rhyming Words"},
+    {day:5,topics:[4],focus:"Word Stress"}
+  ],
+  complete:[
+    {day:1,topics:[0],focus:"Vowel Sounds"},
+    {day:2,topics:[1],focus:"Consonant Sounds"},
+    {day:3,topics:[2],focus:"Consonant Clusters"},
+    {day:4,topics:[3],focus:"Phonetic Transcription"},
+    {day:5,topics:[4],focus:"Word Stress"},
+    {day:6,topics:[5],focus:"Rhyming Words"},
+    {day:7,topics:[7],focus:"Syllables"},
+    {day:8,topics:[6],focus:"Intonation"},
+    {day:9,topics:[8],focus:"Connected Speech"}
+  ],
+  advanced:[
+    {day:1,topics:[0],focus:"Vowel Sounds"},
+    {day:2,topics:[1],focus:"Consonant Sounds"},
+    {day:3,topics:[2],focus:"Consonant Clusters"},
+    {day:4,topics:[3],focus:"Phonetic Transcription"},
+    {day:5,topics:[4],focus:"Word Stress"},
+    {day:6,topics:[5],focus:"Rhyming Words"},
+    {day:7,topics:[7],focus:"Syllables"},
+    {day:8,topics:[6],focus:"Intonation"},
+    {day:9,topics:[8],focus:"Connected Speech"},
+    {day:10,topics:[9],focus:"Oral English Exam Strategy"}
+  ],
+  exam:[
+    {day:1,topics:[0],focus:"Vowel Sounds"},
+    {day:2,topics:[1],focus:"Consonant Sounds"},
+    {day:3,topics:[2],focus:"Consonant Clusters"},
+    {day:4,topics:[3],focus:"Phonetic Transcription"},
+    {day:5,topics:[4],focus:"Word Stress"},
+    {day:6,topics:[5],focus:"Rhyming Words"},
+    {day:7,topics:[7],focus:"Syllables"},
+    {day:8,topics:[6],focus:"Intonation"},
+    {day:9,topics:[8],focus:"Connected Speech"},
+    {day:10,topics:[9],focus:"Oral English Exam Strategy"}
+  ]
+};
+
+function getStudyPackage(){
+  return localStorage.getItem("lessonPackage") || "preview";
+}
+
+function getPlanForToday(){
+  const pkg=getStudyPackage();
+  const plan=dailyStudyPlans[pkg] || dailyStudyPlans.preview;
+  let start=localStorage.getItem("oralEnglishPackageStartDate");
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(start)){
+    start=new Date().toISOString().slice(0,10);
+    localStorage.setItem("oralEnglishPackageStartDate",start);
+  }
+  const startMs=new Date(start+"T00:00:00").getTime();
+  const todayMs=new Date(new Date().toISOString().slice(0,10)+"T00:00:00").getTime();
+  const rawDay=Math.floor((todayMs-startMs)/86400000);
+  const dayIndex=Math.max(0,Math.min(plan.length-1,rawDay));
+  return {pkg, item:plan[dayIndex], dayIndex};
+}
+
+function getStudiedTopicIndexes(){
+  const reviewed=JSON.parse(localStorage.getItem("oralEnglishStudyGuideReviewed")||"[]");
+  const quizDone=JSON.parse(localStorage.getItem("oralEnglishTopicQuizHistory")||"[]");
+  const indexes=new Set(reviewed);
+  if(Array.isArray(quizDone)) quizDone.forEach(x=>{
+    if(typeof x==="number") indexes.add(x);
+    else if(x && typeof x.topicIndex==="number") indexes.add(x.topicIndex);
+  });
+  return [...indexes];
+}
+
+function openDailyPlan(){
+  showPage("dailyPlanPage");
+  renderDailyPlan();
+}
+
+function renderDailyPlan(){
+  const box=document.getElementById("dailyPlanBox");
+  if(!box) return;
+  const today=getPlanForToday();
+  const pkgName=(typeof lessonPackages!=="undefined" && lessonPackages[today.pkg]) ? lessonPackages[today.pkg].name : today.pkg;
+  const topicIndexes=today.item.topics.filter(i=>Array.isArray(lessons) && lessons[i]);
+  const studied=getStudiedTopicIndexes();
+  const allTodayDone=topicIndexes.length>0 && topicIndexes.every(i=>studied.includes(i));
+
+  box.innerHTML=`
+    <div class="daily-plan-hero panel">
+      <div>
+        <span class="eyebrow">PACKAGE: ${pkgName}</span>
+        <h3>Day ${today.item.day} — ${today.item.focus}</h3>
+        <p>Study the topic(s) below first. The practice test is deliberately focused on today's assigned material.</p>
+      </div>
+      <div class="daily-status ${allTodayDone?"done":""}">
+        ${allTodayDone?"✓ Today's topic is marked studied":"● Today's study session is active"}
+      </div>
+    </div>
+
+    <div class="daily-topic-grid">
+      ${topicIndexes.map(i=>`
+        <article class="daily-topic-card">
+          <span class="eyebrow">TODAY'S TOPIC</span>
+          <h3>${lessons[i].icon||""} ${lessons[i].title}</h3>
+          <p>${lessons[i].intro||"Study this lesson carefully."}</p>
+          <div class="daily-topic-actions">
+            <button type="button" class="primary" onclick="openLesson(${i})">Study Topic</button>
+            <button type="button" class="secondary" onclick="markStudyTopic(${i});renderDailyPlan()">Mark Studied</button>
+          </div>
+        </article>`).join("")}
+    </div>
+
+    <div class="daily-test-card panel">
+      <div>
+        <span class="eyebrow">FOCUSED PRACTICE TEST</span>
+        <h3>Test what you studied today</h3>
+        <p>${allTodayDone
+          ? "You have marked today's topic as studied. Take the focused practice now, or review the lesson again."
+          : "Study today's topic before taking the focused practice test. The test will draw questions from today's topic(s), not unrelated topics."}</p>
+      </div>
+      <button type="button" class="primary" onclick="startDailyStudyTest()">Start Today's Test →</button>
+    </div>
+
+    <div class="daily-plan-note panel">
+      <strong>How your package controls the plan</strong>
+      <p>${getPackagePlanExplanation(today.pkg)}</p>
+    </div>`;
+}
+
+function getPackagePlanExplanation(pkg){
+  const map={
+    preview:"Free Preview focuses on the first two introductory topics. Its daily practice stays within those topics.",
+    foundation:"Foundation Course schedules five foundational topics: vowels, consonants, syllables, rhyming and basic word stress.",
+    complete:"Complete Oral English schedules the full core course, adding clusters, transcription, intonation and connected speech.",
+    advanced:"Advanced Mastery covers all ten topics and gives dedicated days to advanced pronunciation and exam strategy.",
+    exam:"Exam Master Package covers all ten topics and reserves the final day for exam strategy and full-test preparation."
+  };
+  return map[pkg] || map.preview;
+}
+
+
+const lessonToQuestionAreas = {
+  "Vowel Sounds":["Vowels"],
+  "Consonant Sounds":["Consonants"],
+  "Consonant Clusters":["Clusters"],
+  "Phonetic Transcription":["Transcription"],
+  "Word Stress":["Stress"],
+  "Rhyming Words":["Rhyming"],
+  "Intonation":["Intonation"],
+  "Syllables":["Syllables"],
+  "Connected Speech":["Connected Speech"],
+  "Oral English Exam Strategy":["Exam Strategy"]
+};
+
+function startDailyStudyTest(){
+  const today=getPlanForToday();
+  const topicIndexes=today.item.topics.filter(i=>Array.isArray(lessons) && lessons[i]);
+  if(!topicIndexes.length){
+    alert("No study topic is assigned for today.");
+    return;
+  }
+
+  const allowedAreas=topicIndexes.flatMap(i=>lessonToQuestionAreas[lessons[i].title] || []);
+  const pool=questionBank.filter(q=>allowedAreas.includes(q.area));
+  if(!pool.length){
+    alert("There are no practice questions available for today's topic yet.");
+    return;
+  }
+
+  const shuffled=pool.slice().sort(()=>Math.random()-0.5);
+  const count=Math.min(10,shuffled.length);
+  const selected=shuffled.slice(0,count);
+
+  window.dailyStudyTest={
+    questions:selected,
+    title:`Daily Practice — ${today.item.focus}`,
+    topicIndexes,
+    dateKey:new Date().toISOString().slice(0,10)
+  };
+
+  showPage("topicQuizPage");
+  const title=document.getElementById("topicQuizTitle");
+  const intro=document.getElementById("topicQuizIntro");
+  const box=document.getElementById("topicQuizBox");
+  if(title) title.textContent=window.dailyStudyTest.title;
+  if(intro) intro.textContent=`Focused practice based only on today's assigned topic: ${topicIndexes.map(i=>lessons[i].title).join(", ")}.`;
+  if(box){
+    box.innerHTML=selected.map((q,i)=>`
+      <div class="question daily-practice-question">
+        <div class="section-label">Daily Practice • Question ${i+1} of ${selected.length}</div>
+        <h3>${q.q}</h3>
+        <div class="options">${q.o.map((o,j)=>`
+          <label class="option"><input type="radio" name="daily-${i}" value="${j}">
+          <span><strong>${String.fromCharCode(65+j)}.</strong> ${o}</span></label>`).join("")}</div>
+      </div>`).join("")+
+      `<button type="button" class="primary" onclick="submitDailyStudyTest()">Submit Daily Test ✓</button>`;
+  }
+}
+
+function submitDailyStudyTest(){
+  const test=window.dailyStudyTest;
+  if(!test || !test.questions || !test.questions.length) return;
+  let score=0;
+  test.questions.forEach((q,i)=>{
+    const chosen=document.querySelector(`input[name="daily-${i}"]:checked`);
+    if(chosen && Number(chosen.value)===q.a) score++;
+  });
+  const pct=Math.round(score/test.questions.length*100);
+  const pass=pct>=75;
+
+  if(typeof recordPerformance==="function"){
+    const areas={};
+    test.questions.forEach((q,idx)=>{
+      const a=q.area||"General";
+      if(!areas[a]) areas[a]={correct:0,total:0};
+      areas[a].total++;
+      const chosen=document.querySelector(`input[name="daily-${idx}"]:checked`);
+      if(chosen && Number(chosen.value)===q.a) areas[a].correct++;
+    });
+    try{recordPerformance(score,areas,"daily_study_test",test.questions.length);}catch(e){console.warn(e);}
+  }
+
+  const history=JSON.parse(localStorage.getItem("oralEnglishDailyTestHistory")||"[]");
+  history.push({date:test.dateKey,score,total:test.questions.length,percentage:pct,topics:test.topicIndexes});
+  localStorage.setItem("oralEnglishDailyTestHistory",JSON.stringify(history));
+
+  const box=document.getElementById("topicQuizBox");
+  if(box) box.innerHTML=`
+    <div class="daily-result panel">
+      <span class="eyebrow">TODAY'S RESULT</span>
+      <div class="result-score">${score}/${test.questions.length}</div>
+      <h3>${pass?"Good work — you are ready to move forward.":"Review today's topic before moving to the next one."}</h3>
+      <p>You scored ${pct}%. ${pass?"You can continue with tomorrow's plan or take a fuller test when you are ready.":"Reopen today's lesson and practise the topic again."}</p>
+      <div class="daily-topic-actions">
+        ${test.topicIndexes.map(i=>`<button type="button" class="secondary" onclick="openLesson(${i})">Review ${lessons[i].title}</button>`).join("")}
+        <button type="button" class="primary" onclick="openDailyPlan()">Back to Daily Plan</button>
+      </div>
+    </div>`;
+}
+
+let studyGuideReviewed = JSON.parse(localStorage.getItem("oralEnglishStudyGuideReviewed") || "[]");
+
+function openStudyGuide(){
+  showPage("studyGuidePage");
+  renderStudyGuide();
+}
+
+function renderStudyGuide(){
+  const index=document.getElementById("studyGuideIndex");
+  const content=document.getElementById("studyGuideContent");
+  if(!index || !content || !Array.isArray(lessons)) return;
+
+  index.innerHTML=lessons.map((l,i)=>`
+    <button type="button" class="study-index-btn ${i===0?"active":""}" onclick="focusStudyTopic(${i})">
+      <span>${l.icon||"•"}</span>
+      <span><strong>${i+1}. ${l.title}</strong><small>${studyGuideReviewed.includes(i)?"✓ Reviewed":"Not reviewed"}</small></span>
+    </button>`).join("");
+
+  content.innerHTML=lessons.map((l,i)=>`
+    <article class="study-topic" id="study-topic-${i}">
+      <div class="study-topic-head">
+        <div><span class="eyebrow">TOPIC ${i+1} OF ${lessons.length}</span><h3>${l.icon||""} ${l.title}</h3></div>
+        <button type="button" class="secondary" onclick="markStudyTopic(${i})">${studyGuideReviewed.includes(i)?"✓ Reviewed":"Mark as reviewed"}</button>
+      </div>
+      <p class="study-intro">${l.intro||""}</p>
+      ${(l.sections||[]).map((s,j)=>`
+        <section class="study-section"><h4>${s.h||s.heading||s.title||"Part "+(j+1)}</h4><div>${s.p||s.body||s.content||""}</div></section>`).join("")}
+      <div class="study-topic-actions">
+        <button type="button" class="primary" onclick="openLesson(${i})">Open Full Lesson</button>
+        <button type="button" class="back-btn" onclick="startTopicQuiz('${String(l.title).replace(/'/g,"\\'")}')">Take Topic Quiz</button>
+      </div>
+    </article>`).join("");
+
+  updateStudyGuideProgress();
+}
+
+function focusStudyTopic(i){
+  document.querySelectorAll(".study-index-btn").forEach((b,n)=>b.classList.toggle("active",n===i));
+  const el=document.getElementById("study-topic-"+i);
+  if(el) el.scrollIntoView({behavior:"smooth",block:"start"});
+}
+
+function markStudyTopic(i){
+  if(studyGuideReviewed.includes(i)) studyGuideReviewed=studyGuideReviewed.filter(x=>x!==i);
+  else studyGuideReviewed.push(i);
+  localStorage.setItem("oralEnglishStudyGuideReviewed",JSON.stringify(studyGuideReviewed));
+  renderStudyGuide();
+  focusStudyTopic(i);
+}
+
+function updateStudyGuideProgress(){
+  const total=Array.isArray(lessons)?lessons.length:10, done=studyGuideReviewed.length;
+  const label=document.getElementById("studyGuideProgress"), fill=document.getElementById("studyGuideProgressFill");
+  if(label) label.textContent=`${done} / ${total} topics reviewed`;
+  if(fill) fill.style.width=(total?done/total*100:0)+"%";
+}
+
+/* ===================== DIRECT BANK TRANSFER ===================== */
+const BANK_TRANSFER_DETAILS = {bank:"Opay",accountName:"DESTINY OMOKHIOMION AILOKPEDE",accountNumber:"7069929746"};
+
+function currentAccountEmail(){ return localStorage.getItem("oralEnglishCurrentUser") || ""; }
+function hasPaidPackage(type,key){
+  try{ const data=JSON.parse(localStorage.getItem("oralEnglishPaidPackages")||"{}"); return !!(data[type] && data[type][key]); }catch(e){ return false; }
+}
+function grantPaidPackage(type,key){
+  let data={}; try{data=JSON.parse(localStorage.getItem("oralEnglishPaidPackages")||"{}");}catch(e){}
+  if(!data[type]) data[type]={}; data[type][key]={paidAt:new Date().toISOString()};
+  localStorage.setItem("oralEnglishPaidPackages",JSON.stringify(data));
+}
+async function syncApprovedPackages(){
+  const email=currentAccountEmail();
+  if(!email || !PAYMENT_API_URL || PAYMENT_API_URL.includes("PASTE_YOUR_")) return;
+  try{
+    const response=await fetch(PAYMENT_API_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action:"getApproved",email})});
+    const data=await response.json();
+    if(data.ok && Array.isArray(data.approved)){
+      data.approved.forEach(p=>{ if(p.type && p.key) grantPaidPackage(p.type,p.key); });
+    }
+  }catch(e){ console.warn("Could not sync approved packages:",e); }
+}
+
+async function refreshStudentPaymentStatus(){
+  const email=currentAccountEmail();
+  const box=document.getElementById("studentPaymentStatus");
+  const list=document.getElementById("studentPaymentStatusList");
+  if(!box||!list) return;
+  if(!email){ box.style.display="none"; return; }
+  box.style.display="block";
+  list.innerHTML='<div class="notice">Checking your payment status…</div>';
+  let local=[];
+  try{ local=JSON.parse(localStorage.getItem("oralEnglishPendingBankTransfers")||"[]").filter(p=>String(p.email||"").toLowerCase()===email.toLowerCase()); }catch(e){ local=[]; }
+  let online=[];
+  if(PAYMENT_API_URL && !PAYMENT_API_URL.includes("PASTE_YOUR_")){
+    try{
+      const response=await fetch(PAYMENT_API_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action:"getPaymentStatus",email})});
+      const data=await response.json();
+      if(data.ok && Array.isArray(data.payments)) online=data.payments;
+    }catch(e){ console.warn("Could not check payment status:",e); }
+  }
+  const byId={};
+  local.forEach(p=>byId[p.id]=p);
+  online.forEach(p=>byId[p.id]=p);
+  const payments=Object.values(byId).sort((a,b)=>new Date(b.submittedAt||0)-new Date(a.submittedAt||0));
+  if(!payments.length){ list.innerHTML='<tr><td colspan="4" style="padding:18px;text-align:center" class="performance-empty">No payment confirmations have been submitted yet.</td></tr>'; return; }
+  list.innerHTML=payments.map(p=>{
+    const status=String(p.status||"pending").toLowerCase();
+    const label=status==="approved"?"APPROVED":status==="rejected"?"REJECTED":"PENDING";
+    const cls=status==="approved"?"pass":status==="rejected"?"fail":"muted";
+    const date=p.submittedAt?new Date(p.submittedAt).toLocaleString():"";
+    const notice=status==="pending"?"Your payment is awaiting verification. You do not need to pay again.":status==="approved"?"Payment verified — your package is now unlocked.":"Payment was not approved. Please contact the Academy for assistance.";
+    return `<tr>
+      <td style="padding:14px;border-bottom:1px solid var(--line)"><strong>${String(p.packageName||"Package")}</strong><br><small class="muted">Submitted ${date}</small></td>
+      <td style="padding:14px;border-bottom:1px solid var(--line)"><strong>${String(p.amount||"—")}</strong></td>
+      <td style="padding:14px;border-bottom:1px solid var(--line)"><strong class="${cls}">${label}</strong></td>
+      <td style="padding:14px;border-bottom:1px solid var(--line)" class="${cls}">${notice}</td>
+    </tr>`;
+  }).join("");
+}
+
+function openBankTransferModal(type,key){
+  const names= type==="lesson" ? {foundation:"Foundation Course",complete:"Complete Oral English",advanced:"Advanced Mastery",exam:"Exam Master Package"} : {basic:"Premium Basic",standard:"Premium Standard",advanced:"Premium Advanced",mock:"Premium Mock Exam"};
+  const prices={foundation:"₦1,000",complete:"₦2,000",advanced:"₦3,500",exam:"₦5,000",basic:"₦500",standard:"₦1,000",advanced_test:"₦1,500",mock:"₦2,500"};
+  const price=key==="advanced" && type==="test" ? "₦1,500" : prices[key];
+  const name=names[key];
+  if(!name)return;
+  if(!currentAccountEmail()){alert("Please sign in or create an account before making a payment.");showPage("homePage");return;}
+  const modal=document.getElementById("bankTransferModal");
+  document.getElementById("bankModalTitle").textContent=name;
+  document.getElementById("bankModalAmount").textContent="Amount to transfer: "+price;
+  modal.dataset.type=type; modal.dataset.key=key; modal.dataset.name=name; modal.dataset.price=price;
+  modal.classList.add("open"); modal.setAttribute("aria-hidden","false");
+}
+function closeBankTransferModal(){
+  const modal=document.getElementById("bankTransferModal");
+  if(modal){modal.classList.remove("open");modal.setAttribute("aria-hidden","true");}
+}
+function confirmBankTransfer(){
+  const modal=document.getElementById("bankTransferModal");
+  if(!modal)return;
+  const record={id:"BT-"+Date.now(),email:currentAccountEmail(),candidateName:localStorage.getItem("oralEnglishCandidateName")||"",type:modal.dataset.type,key:modal.dataset.key,packageName:modal.dataset.name,amount:modal.dataset.price,status:"pending",submittedAt:new Date().toISOString()};
+  const list=JSON.parse(localStorage.getItem("oralEnglishPendingBankTransfers")||"[]");
+  list.push(record); localStorage.setItem("oralEnglishPendingBankTransfers",JSON.stringify(list));
+  if(PAYMENT_API_URL && !PAYMENT_API_URL.includes("PASTE_YOUR_")){
+    fetch(PAYMENT_API_URL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action:"submitPayment",payment:record})}).catch(()=>{});
+  }
+  closeBankTransferModal();
+  refreshStudentPaymentStatus();
+  alert("Transfer confirmation submitted. Your payment status is now PENDING until the transfer is verified.");
+}
+
+let adminLoggedIn=false;
+function openAdminPage(){
+  showPage("adminPage");
+  if(adminLoggedIn){ loadAdminPayments(); loadAdminComments(); }
+}
+function adminLogin(){
+  const password=document.getElementById("adminPassword").value;
+  if(!password){document.getElementById("adminError").textContent="Enter the admin password.";return;}
+  if(PAYMENT_API_URL.includes("PASTE_YOUR_")){
+    document.getElementById("adminError").textContent="Connect the Google Apps Script Web App URL first.";return;
+  }
+  // The actual password check is performed by the backend; the browser does not store it.
+  fetch(PAYMENT_API_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action:"adminLogin",password})})
+    .then(r=>r.json()).then(data=>{
+      if(!data.ok){document.getElementById("adminError").textContent=data.error||"Admin sign in failed.";return;}
+      adminLoggedIn=true;
+      sessionStorage.setItem("oralEnglishAdminToken",data.token);
+      document.getElementById("adminLoginBox").style.display="none";
+      document.getElementById("adminDashboard").style.display="block";
+      loadAdminPayments();
+      loadAdminComments();
+    }).catch(()=>{document.getElementById("adminError").textContent="Could not connect to the payment server.";});
+}
+function loadAdminPayments(){
+  const token=sessionStorage.getItem("oralEnglishAdminToken");
+  if(!token)return;
+  const list=document.getElementById("adminPaymentsList");
+  list.innerHTML="Loading payment requests…";
+  fetch(PAYMENT_API_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action:"listPayments",token})})
+    .then(r=>r.json()).then(data=>{
+      if(!data.ok){list.innerHTML='<div class="notice">'+(data.error||"Unable to load payments.")+'</div>';return;}
+      const pending=data.payments.filter(p=>p.status==="pending");
+      const approved=data.payments.filter(p=>p.status==="approved");
+      document.getElementById("adminPendingCount").textContent=pending.length;
+      document.getElementById("adminApprovedCount").textContent=approved.length;
+      if(!data.payments.length){list.innerHTML='<div class="performance-empty">No payment requests yet.</div>';return;}
+      list.innerHTML=data.payments.map(p=>{
+        const safeName=String(p.candidateName||"Candidate").replace(/[<>&]/g,m=>({"<":"&lt;",">":"&gt;","&":"&amp;"}[m]));
+        const safeEmail=String(p.email||"").replace(/[<>&]/g,m=>({"<":"&lt;",">":"&gt;","&":"&amp;"}[m]));
+        const safePkg=String(p.packageName||"").replace(/[<>&]/g,m=>({"<":"&lt;",">":"&gt;","&":"&amp;"}[m]));
+        const date=p.submittedAt?new Date(p.submittedAt).toLocaleString():"";
+        return `<div class="panel" style="margin-top:14px"><strong>${safeName}</strong><br><span class="muted">${safeEmail}</span><p><strong>${safePkg}</strong> — ${p.amount||""}<br><small>Submitted: ${date}<br>Reference: ${p.id||""}</small></p><span class="badge">${String(p.status||"pending").toUpperCase()}</span>${p.status==="pending"?`<div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px"><button class="primary" onclick="approvePayment('${String(p.id).replace(/'/g,"\'")}')">Approve & Unlock</button><button class="back-btn" onclick="rejectPayment('${String(p.id).replace(/'/g,"\'")}')">Reject</button></div>`:""}</div>`;
+      }).join("");
+    }).catch(()=>{list.innerHTML='<div class="notice">Could not connect to the payment server.</div>';});
+}
+function approvePayment(id){
+  const token=sessionStorage.getItem("oralEnglishAdminToken");
+  if(!token)return;
+  if(!confirm("Confirm that you have received this exact payment in Opay and approve this package?"))return;
+  fetch(PAYMENT_API_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action:"approvePayment",token,id})})
+    .then(r=>r.json()).then(data=>{alert(data.ok?"Payment approved and package unlocked.":(data.error||"Approval failed."));if(data.ok)loadAdminPayments();}).catch(()=>alert("Could not connect to the payment server."));
+}
+function rejectPayment(id){
+  const token=sessionStorage.getItem("oralEnglishAdminToken");
+  if(!token)return;
+  if(!confirm("Reject this payment request?"))return;
+  fetch(PAYMENT_API_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action:"rejectPayment",token,id})})
+    .then(r=>r.json()).then(data=>{alert(data.ok?"Payment request rejected.":(data.error||"Rejection failed."));if(data.ok)loadAdminPayments();}).catch(()=>alert("Could not connect to the payment server."));
+}
+
+
+
+async function submitContactMessage(event){
+  event.preventDefault();
+  const subject=document.getElementById("contactSubject").value.trim();
+  const message=document.getElementById("contactMessage").value.trim();
+  const email=currentAccountEmail()||"";
+  const name=localStorage.getItem("oralEnglishCandidateName")||"Guest";
+  const status=document.getElementById("contactStatus");
+  status.style.display="block"; status.textContent="Sending…";
+  if(PAYMENT_API_URL.includes("PASTE_YOUR_")){ status.textContent="Please connect the academy backend before sending messages."; return; }
+  try{
+    const r=await fetch(PAYMENT_API_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action:"contactMessage",name,email,subject,message})});
+    const data=await r.json();
+    status.textContent=data.ok?"Message sent. The academy will review it and respond by email when needed.":(data.error||"Could not send the message.");
+    if(data.ok){subjectEl.value="";messageEl.value="";}
+  }catch(e){status.textContent="Could not connect to the academy service.";}
+}
+
+async function submitComment(event){
+  event.preventDefault();
+  const comment=document.getElementById("commentText").value.trim();
+  const email=currentAccountEmail()||"";
+  const name=localStorage.getItem("oralEnglishCandidateName")||"Guest";
+  const status=document.getElementById("commentStatus");
+  status.style.display="block"; status.textContent="Posting…";
+  if(PAYMENT_API_URL.includes("PASTE_YOUR_")){ status.textContent="Please connect the academy backend before posting comments."; return; }
+  try{
+    const r=await fetch(PAYMENT_API_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action:"submitComment",name,email,comment})});
+    const data=await r.json();
+    status.textContent=data.ok?"Comment posted. Thank you for your feedback.":(data.error||"Could not post the comment.");
+    if(data.ok){commentEl.value="";loadPublicComments();loadHomePublicComments();}
+  }catch(e){status.textContent="Could not connect to the academy service.";}
+}
+
+async function loadPublicComments(){
+  const box=document.getElementById("publicComments"); if(!box || PAYMENT_API_URL.includes("PASTE_YOUR_")) return;
+  try{const r=await fetch(PAYMENT_API_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action:"listComments"})}); const data=await r.json();
+    if(!data.ok){box.innerHTML="";return;}
+    box.innerHTML=data.comments.slice(0,20).map(c=>`<div class="comment-item"><strong>${escapeHtml(c.name||"Student")}</strong><br><small>${c.createdAt?new Date(c.createdAt).toLocaleString():""}</small><p style="margin-bottom:0;line-height:1.6">${escapeHtml(c.comment||"")}</p></div>`).join("");
+    const homeBox=document.getElementById("homePublicComments");
+    if(homeBox) homeBox.innerHTML=box.innerHTML;
+  }catch(e){}
+}
+function escapeHtml(value){return String(value).replace(/[&<>\"]/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[m]));}
+async function loadHomePublicComments(){
+  const homeBox=document.getElementById("homePublicComments");
+  if(!homeBox || PAYMENT_API_URL.includes("PASTE_YOUR_")) return;
+  try{const r=await fetch(PAYMENT_API_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action:"listComments"})}); const data=await r.json();
+    if(data.ok) homeBox.innerHTML=data.comments.slice(0,20).map(c=>`<div class="comment-item"><strong>${escapeHtml(c.name||"Student")}</strong><br><small>${c.createdAt?new Date(c.createdAt).toLocaleString():""}</small><p style="margin-bottom:0;line-height:1.6">${escapeHtml(c.comment||"")}</p></div>`).join("");
+  }catch(e){}
+}
+
+async function loadAdminComments(){
+  const token=sessionStorage.getItem("oralEnglishAdminToken"), box=document.getElementById("adminCommentsList"); if(!token||!box)return;
+  box.textContent="Loading comments…";
+  try{const r=await fetch(PAYMENT_API_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action:"listComments",token})}); const data=await r.json();
+    if(!data.ok){box.innerHTML='<div class="notice">'+escapeHtml(data.error||"Unable to load comments.")+'</div>';return;}
+    box.innerHTML=data.comments.length?data.comments.map(c=>`<div class="comment-item"><strong>${escapeHtml(c.name||"Student")}</strong> <small>${escapeHtml(c.email||"")}</small><br><small>${c.createdAt?new Date(c.createdAt).toLocaleString():""}</small><p>${escapeHtml(c.comment||"")}</p></div>`).join(""): '<div class="performance-empty">No comments yet.</div>';
+  }catch(e){box.innerHTML='<div class="notice">Could not connect to the academy service.</div>';}
+}
+
+function startPackagePayment(type,key){ openBankTransferModal(type,key); return false; }
+function handlePaymentReturn(){}
+
+const lessonPackages = {
+  preview:{name:"Free Preview",price:"Free",maxTopics:2},
+  foundation:{name:"Foundation Course",price:"₦1,000",maxTopics:5},
+  complete:{name:"Complete Oral English",price:"₦2,000",maxTopics:9},
+  advanced:{name:"Advanced Mastery",price:"₦3,500",maxTopics:10},
+  exam:{name:"Exam Master Package",price:"₦5,000",maxTopics:10}
+};
+
+let selectedLessonPackage = localStorage.getItem("lessonPackage") || "preview";
+
+function lessonUnlocked(index){
+  const pkg = lessonPackages[selectedLessonPackage] || lessonPackages.preview;
+  if(index < pkg.maxTopics) return true;
+  return false;
+}
+
+async function selectLessonPackage(key){
+  if(key === "preview"){
+    selectedLessonPackage = key;
+    localStorage.setItem("lessonPackage", key);
+    localStorage.setItem("oralEnglishPackageStartDate", new Date().toISOString().slice(0,10));
+    showPage("learnPage");
+    openLesson(0);
+    return;
+  }
+  try{
+    await syncApprovedPackages();
+    if(!hasPaidPackage("lesson",key)){
+      await startPackagePayment("lesson",key);
+      return;
+    }
+    selectedLessonPackage = key;
+    localStorage.setItem("lessonPackage", key);
+    localStorage.setItem("oralEnglishPackageStartDate", new Date().toISOString().slice(0,10));
+    showPage("learnPage");
+    openLesson(0);
+  }catch(e){ alert(e.message||"Unable to start payment."); }
+}
+
+
+let currentLesson = 0;
+
+function renderLessons(){
+  const nav = document.getElementById("lessonNav");
+  if(!nav) return;
+  nav.innerHTML = lessons.map((lesson,i)=>{
+    const unlocked = lessonUnlocked(i);
+    return `
+    <button class="lesson-nav-btn ${i===currentLesson?'active':''} ${unlocked?'':'locked'}"
+      ${unlocked ? `onclick="openLesson(${i})"` : `onclick="showLessonUpgrade(${i})"`}>
+      ${lesson.icon} ${lesson.title} ${unlocked ? '🔓' : '🔒'}
+      <small>Topic ${i+1} of ${lessons.length} • ${unlocked ? 'Unlocked' : 'Locked'}</small>
+    </button>`;
+  }).join("");
+}
+
+function openLesson(index){
+  if(!lessonUnlocked(index)){
+    showLessonUpgrade(index);
+    return;
+  }
+  currentLesson = Math.max(0, Math.min(index, lessons.length-1));
+  const lesson = lessons[currentLesson];
+  const viewer = document.getElementById("lessonViewer");
+  if(!viewer) return;
+
+  viewer.innerHTML = `
+    <div class="lesson-hero">
+      <div class="lesson-icon">${lesson.icon}</div>
+      <span class="eyebrow">TOPIC ${currentLesson+1} OF ${lessons.length}</span>
+      <h2>${lesson.title}</h2>
+      <p>${lesson.intro}</p>
+    </div>
+    ${lesson.sections.slice(0,-1).map(s=>`
+      <article class="lesson-section">
+        <h3>${s.h}</h3>
+        <p>${s.p}</p>
+      </article>`).join("")}
+    <div class="lesson-practice">
+      <strong>🎯 Quick Practice</strong>
+      <p>${lesson.sections[lesson.sections.length-1].p}</p>
+    </div>`;
+
+  const progress = document.getElementById("lessonProgress");
+  if(progress) progress.textContent = `Lesson ${currentLesson+1} of ${lessons.length}`;
+  renderLessons();
+}
+
+
+function showLessonUpgrade(index){
+  const needed = index < 2 ? "Free Preview" :
+                 index < 5 ? "Foundation Course" :
+                 index < 9 ? "Complete Oral English" : "Advanced Mastery";
+  alert(`🔒 This lesson is locked.\n\nUpgrade to ${needed} to unlock it.`);
+  showPage("lessonPlansPage");
+}
+
+function nextLesson(){
+  if(currentLesson < lessons.length-1){
+    const next = currentLesson + 1;
+    if(!lessonUnlocked(next)){ showLessonUpgrade(next); return; }
+    openLesson(next);
+    window.scrollTo({top:0,behavior:"smooth"});
+  }
+}
+
+function previousLesson(){
+  if(currentLesson > 0){
+    openLesson(currentLesson-1);
+    window.scrollTo({top:0,behavior:"smooth"});
+  }
+}
+
+</script>
+<script>
+document.addEventListener("DOMContentLoaded",()=>{ renderLessons(); openLesson(0); });
+</script>
+
+<script>document.addEventListener("DOMContentLoaded",()=>{refreshHomeAccount(); syncApprovedPackages();});</script>
+<div id="bankTransferModal" class="bank-modal" aria-hidden="true">
+  <div class="bank-modal-card">
+    <button type="button" class="bank-modal-close" onclick="closeBankTransferModal()">×</button>
+    <div class="badge">BANK TRANSFER</div>
+    <h2 id="bankModalTitle">Complete your payment</h2>
+    <p id="bankModalAmount" class="bank-modal-amount"></p>
+    <div class="bank-account-box">
+      <div><span>Bank</span><strong>Opay</strong></div>
+      <div><span>Account Name</span><strong>DESTINY OMOKHIOMION AILOKPEDE</strong></div>
+      <div><span>Account Number</span><strong>7069929746</strong></div>
+    </div>
+    <p class="muted">Transfer the exact amount to the account above. After payment, keep your transfer reference. Your package will be unlocked after manual verification.</p>
+    <button type="button" class="primary full" onclick="confirmBankTransfer()">I Have Made the Transfer</button>
+    <button type="button" class="full" onclick="closeBankTransferModal()">Cancel</button>
+  </div>
+</div>
+
+</body>
+</html>
