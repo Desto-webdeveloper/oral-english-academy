@@ -712,7 +712,26 @@ body{
           </div>
           <p id="loginError" style="color:var(--danger);font-weight:700"></p>
           <button class="primary" onclick="loginAccount()">Sign In →</button>
+          <button class="back-btn" type="button" onclick="showForgotPassword()" style="margin-top:10px;width:100%">Forgot password?</button>
           <p class="account-note">Use the same email and password you used when you registered.</p>
+        </div>
+
+        <div id="forgotPasswordForm" style="display:none">
+          <h3>Reset your password</h3>
+          <p class="account-note">Enter your email and we will send a one-time reset code. The code expires after 15 minutes.</p>
+          <div class="form-grid">
+            <div><label for="resetEmail">Email address</label><input id="resetEmail" type="email" placeholder="Enter your account email"></div>
+            <div><label for="resetCode">Reset code</label><input id="resetCode" inputmode="numeric" maxlength="6" placeholder="6-digit code"></div>
+            <div><label for="resetPassword">New password</label><input id="resetPassword" type="password" placeholder="Create a new password"></div>
+            <div><label for="resetPassword2">Confirm new password</label><input id="resetPassword2" type="password" placeholder="Confirm new password"></div>
+          </div>
+          <p id="resetStatus" style="font-weight:700"></p>
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
+            <button class="primary" type="button" onclick="requestPasswordReset()">Email Me a Reset Code</button>
+            <button class="back-btn" type="button" onclick="resetPasswordWithCode()">Set New Password</button>
+            <button class="back-btn" type="button" onclick="showAccountForm('login')">Back to Sign In</button>
+          </div>
+        </div>
         </div>
       </div>
     </div>
@@ -1200,9 +1219,9 @@ function validateQuestionBank(){
 let candidateName="", candidateEmail="", secondsLeft=0, timerInterval=null, submitted=false;
 // Online performance-report service.
 // After deploying the included Google Apps Script, paste its Web App URL here.
-const PERFORMANCE_API_URL = "PASTE_YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE";
+const PERFORMANCE_API_URL = "https://script.google.com/macros/s/AKfycbz8sblvEd8NzB6WJfQjqyyud-7yNBqSuxdC3fAKP1AuvNGoC3AwR7tCnaCjBP5dgiCI/exec";
 // Use the same deployed Google Apps Script Web App URL for payment verification.
-const PAYMENT_API_URL = "PASTE_YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE";
+const PAYMENT_API_URL = "https://script.google.com/macros/s/AKfycbz8sblvEd8NzB6WJfQjqyyud-7yNBqSuxdC3fAKP1AuvNGoC3AwR7tCnaCjBP5dgiCI/exec";
 
 function getPerformanceHistory(){
   try { return JSON.parse(localStorage.getItem("oralEnglishPerformance") || "[]"); }
@@ -1420,6 +1439,7 @@ function showAccountForm(type){
   const register=type==='register';
   document.getElementById('registerForm').style.display=register?'block':'none';
   document.getElementById('loginForm').style.display=register?'none':'block';
+  document.getElementById('forgotPasswordForm').style.display='none';
   document.getElementById('registerTab').classList.toggle('active',register);
   document.getElementById('loginTab').classList.toggle('active',!register);
 }
@@ -1459,6 +1479,63 @@ async function loginAccount(){
   candidateName=accounts[email].name; candidateEmail=accounts[email].email;
   loadSavedAccount(); refreshHomeAccount();
 }
+function showForgotPassword(){
+  showAccountForm('login');
+  document.getElementById('loginForm').style.display='none';
+  document.getElementById('forgotPasswordForm').style.display='block';
+  const email=document.getElementById('loginEmail').value.trim().toLowerCase();
+  document.getElementById('resetEmail').value=email;
+  document.getElementById('resetStatus').textContent='';
+}
+
+function requestPasswordReset(){
+  const email=document.getElementById('resetEmail').value.trim().toLowerCase();
+  const status=document.getElementById('resetStatus');
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){status.textContent='Please enter a valid email address.';status.style.color='var(--danger)';return}
+  if(!PAYMENT_API_URL || PAYMENT_API_URL.includes('PASTE_YOUR_')){status.textContent='The academy email service is not connected yet. Connect the Apps Script Web App URL first.';status.style.color='var(--danger)';return}
+  localStorage.setItem('oralEnglishPasswordResetEmail',email);
+  status.textContent='Sending your reset code…';status.style.color='var(--muted)';
+  fetch(PAYMENT_API_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'requestPasswordReset',email})})
+    .then(()=>{status.textContent='If the email is registered, a 6-digit reset code has been sent. Check your inbox and spam folder.';status.style.color='var(--success,#18794e)';})
+    .catch(()=>{status.textContent='The reset request could not be sent. Please check the academy backend connection.';status.style.color='var(--danger)';});
+}
+
+function resetPasswordWithCode(){
+  const email=document.getElementById('resetEmail').value.trim().toLowerCase();
+  const code=document.getElementById('resetCode').value.trim();
+  const password=document.getElementById('resetPassword').value;
+  const confirm=document.getElementById('resetPassword2').value;
+  const status=document.getElementById('resetStatus');
+  if(!email || !/^\d{6}$/.test(code)){status.textContent='Enter the 6-digit reset code from your email.';status.style.color='var(--danger)';return}
+  if(password.length<6){status.textContent='Your new password must be at least 6 characters.';status.style.color='var(--danger)';return}
+  if(password!==confirm){status.textContent='The new passwords do not match.';status.style.color='var(--danger)';return}
+  if(!PAYMENT_API_URL || PAYMENT_API_URL.includes('PASTE_YOUR_')){status.textContent='The academy email service is not connected yet.';status.style.color='var(--danger)';return}
+  status.textContent='Checking your reset code…';status.style.color='var(--muted)';
+  const callback='oralEnglishResetCallback_'+Date.now();
+  window[callback]=async function(result){
+    try{document.getElementById('oralEnglishResetScript').remove();}catch(e){}
+    if(!result || !result.ok){status.textContent=(result&&result.error)||'The reset code is invalid or expired.';status.style.color='var(--danger)';return}
+    const accounts=JSON.parse(localStorage.getItem('oralEnglishAccounts')||'{}');
+    if(!accounts[email]){
+      status.textContent='The code was verified, but this device has no saved account for that email. Please create the account again using the same email.';
+      status.style.color='var(--danger)';
+      return;
+    }
+    accounts[email].passwordHash=await hashPassword(password);
+    localStorage.setItem('oralEnglishAccounts',JSON.stringify(accounts));
+    localStorage.removeItem('oralEnglishPasswordResetEmail');
+    document.getElementById('loginEmail').value=email;
+    document.getElementById('loginPassword').value='';
+    status.textContent='Password changed successfully. You can now sign in.';
+    status.style.color='var(--success,#18794e)';
+    setTimeout(()=>showAccountForm('login'),800);
+  };
+  const script=document.createElement('script');
+  script.id='oralEnglishResetScript';
+  script.src=PAYMENT_API_URL+'?action=validatePasswordReset&email='+encodeURIComponent(email)+'&code='+encodeURIComponent(code)+'&callback='+encodeURIComponent(callback);
+  document.body.appendChild(script);
+}
+
 function loadSavedAccount(){
   const currentEmail=localStorage.getItem('oralEnglishCurrentUser');
   const accounts=JSON.parse(localStorage.getItem('oralEnglishAccounts')||'{}');
