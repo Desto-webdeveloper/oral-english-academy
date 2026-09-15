@@ -2416,72 +2416,77 @@ function closeBankTransferModal(){
 }
 function confirmBankTransfer(){
   const modal=document.getElementById("bankTransferModal");
-  const evidenceInput=document.getElementById("paymentEvidence");
-  if(!modal || !evidenceInput)return;
-  const file=evidenceInput.files && evidenceInput.files[0];
-  if(!file){alert("Please upload evidence of payment before submitting your transfer confirmation.");return;}
-  if(file.size > 5*1024*1024){alert("The payment evidence file is too large. Please choose a file no larger than 5 MB.");return;}
-  if(!currentAccountEmail()){alert("Please sign in or create an account before making a payment.");return;}
-
+  if(!modal)return;
+  const evidence=document.getElementById("paymentEvidence");
+  const file=evidence && evidence.files ? evidence.files[0] : null;
+  if(!file){alert("Please upload your payment evidence before submitting the transfer confirmation.");return;}
+  const allowed=["image/jpeg","image/png","image/webp","application/pdf"];
+  if(!allowed.includes(file.type)){alert("Please upload a JPG, PNG, WEBP image or PDF payment receipt.");return;}
+  if(file.size>5*1024*1024){alert("Payment evidence must be 2 MB or smaller.");return;}
+  const record={id:"BT-"+Date.now(),email:currentAccountEmail(),candidateName:localStorage.getItem("oralEnglishCandidateName")||"",type:modal.dataset.type,key:modal.dataset.key,packageName:modal.dataset.name,amount:modal.dataset.price,status:"pending",submittedAt:new Date().toISOString(),evidenceName:file.name,evidenceType:file.type};
   const reader=new FileReader();
-  reader.onload=function(){
-    const result=String(reader.result||"");
-    const comma=result.indexOf(",");
-    if(comma<0){alert("Could not read the payment evidence. Please choose the file again.");return;}
-    const base64=result.slice(comma+1);
-    const record={id:"BT-"+Date.now(),email:currentAccountEmail(),candidateName:localStorage.getItem("oralEnglishCandidateName")||"",type:modal.dataset.type,key:modal.dataset.key,packageName:modal.dataset.name,amount:modal.dataset.price,status:"pending",submittedAt:new Date().toISOString(),evidenceName:file.name};
-    const list=JSON.parse(localStorage.getItem("oralEnglishPendingBankTransfers")||"[]");
-    list.push(record); localStorage.setItem("oralEnglishPendingBankTransfers",JSON.stringify(list));
-
-    if(PAYMENT_API_URL && !PAYMENT_API_URL.includes("PASTE_YOUR_")){
-      const paymentPayload={action:"submitPayment",payment:Object.assign({},record,{evidence:{name:file.name,mimeType:file.type||"application/octet-stream",base64:base64}})};
-      fetch(PAYMENT_API_URL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(paymentPayload)}).catch(()=>{});
+  const button=document.getElementById("confirmBankTransferButton");
+  if(button){button.disabled=true;button.textContent="Uploading evidence…";}
+  reader.onload=async function(){
+    try{
+      const dataUrl=String(reader.result||"");
+      record.evidence={name:file.name,mimeType:file.type,base64:dataUrl.split(",")[1]||""};
+      const list=JSON.parse(localStorage.getItem("oralEnglishPendingBankTransfers")||"[]");
+      list.push({id:record.id,email:record.email,candidateName:record.candidateName,type:record.type,key:record.key,packageName:record.packageName,amount:record.amount,status:"pending",submittedAt:record.submittedAt,evidenceName:record.evidenceName,evidenceType:record.evidenceType});
+      localStorage.setItem("oralEnglishPendingBankTransfers",JSON.stringify(list));
+      if(!PAYMENT_API_URL || PAYMENT_API_URL.includes("PASTE_YOUR_")) throw new Error("Backend not connected");
+      const body=new URLSearchParams({action:"submitPayment",payment:JSON.stringify(record)}).toString();
+      await fetch(PAYMENT_API_URL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"application/x-www-form-urlencoded;charset=UTF-8"},body});
+      closeBankTransferModal();
+      refreshStudentPaymentStatus();
+      alert("Transfer confirmation and payment evidence submitted. Your payment is now PENDING. You will receive an email after verification.");
+    }catch(e){
+      if(button){button.disabled=false;button.textContent="I Have Made the Transfer";}
+      alert("The payment evidence could not be submitted. Please check your internet connection and try again.");
     }
-
-    evidenceInput.value="";
-    closeBankTransferModal();
-    refreshStudentPaymentStatus();
-    alert("Payment evidence submitted successfully. Your payment is now PENDING verification. You will receive an email after the transfer is checked. Please do not pay again while it is pending.");
   };
-  reader.onerror=function(){alert("Could not read the payment evidence. Please choose the file again.");};
+  reader.onerror=function(){if(button){button.disabled=false;button.textContent="I Have Made the Transfer";}alert("Could not read the payment evidence file. Please choose it again.");};
   reader.readAsDataURL(file);
 }
 
 async function submitContactMessage(event){
   event.preventDefault();
-  const subject=document.getElementById("contactSubject").value.trim();
-  const message=document.getElementById("contactMessage").value.trim();
+  const subjectEl=document.getElementById("contactSubject");
+  const messageEl=document.getElementById("contactMessage");
+  const subject=subjectEl.value.trim();
+  const message=messageEl.value.trim();
   const email=currentAccountEmail()||"";
   const name=localStorage.getItem("oralEnglishCandidateName")||"Guest";
   const status=document.getElementById("contactStatus");
   status.style.display="block"; status.textContent="Sending…";
   if(PAYMENT_API_URL.includes("PASTE_YOUR_")){ status.textContent="Please connect the academy backend before sending messages."; return; }
   try{
-    const r=await fetch(PAYMENT_API_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action:"contactMessage",name,email,subject,message})});
-    const data=await r.json();
-    status.textContent=data.ok?"Message sent. The academy will review it and respond by email when needed.":(data.error||"Could not send the message.");
-    if(data.ok){subjectEl.value="";messageEl.value="";}
-  }catch(e){status.textContent="Could not connect to the academy service.";}
+    const body=new URLSearchParams({action:"contactMessage",name,email,subject,message}).toString();
+    await fetch(PAYMENT_API_URL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"application/x-www-form-urlencoded;charset=UTF-8"},body});
+    status.textContent="Message sent successfully to Oral English Academy.";
+    subjectEl.value="";messageEl.value="";
+  }catch(e){status.textContent="Could not send the message. Please try again.";}
 }
 
 async function submitComment(event){
   event.preventDefault();
-  const comment=document.getElementById("commentText").value.trim();
+  const form=event.target;
+  const commentEl=form ? form.querySelector("textarea") : document.getElementById("commentText");
+  const comment=(commentEl ? commentEl.value : "").trim();
   const email=currentAccountEmail()||"";
   const name=localStorage.getItem("oralEnglishCandidateName")||"Guest";
-  const status=document.getElementById("commentStatus");
-  status.style.display="block"; status.textContent="Posting…";
-  if(PAYMENT_API_URL.includes("PASTE_YOUR_")){ status.textContent="Please connect the academy backend before posting comments."; return; }
+  const statusId=form && form.closest(".contact-card") ? (form.closest(".contact-card").querySelector(".notice")?.id || "commentStatus") : "commentStatus";
+  const status=document.getElementById(statusId) || document.getElementById("commentStatus") || document.getElementById("homeCommentStatus");
+  if(status){status.style.display="block"; status.textContent="Posting…";}
+  if(!comment){if(status)status.textContent="Please enter a comment before posting.";return;}
+  if(PAYMENT_API_URL.includes("PASTE_YOUR_")){ if(status)status.textContent="Please connect the academy backend before posting comments."; return; }
   try{
-    // Apps Script web apps can return a cross-origin response that the browser
-    // does not allow the GitHub Pages site to read. no-cors still sends the
-    // POST to the backend, so the comment can be stored and emailed.
-    await fetch(PAYMENT_API_URL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action:"submitComment",name,email,comment})});
-    status.textContent="Comment submitted successfully. Thank you for your feedback.";
-    commentEl.value="";
-    loadPublicComments();
-    loadHomePublicComments();
-  }catch(e){status.textContent="Could not connect to the academy service.";}
+    const body=new URLSearchParams({action:"submitComment",name,email,comment}).toString();
+    await fetch(PAYMENT_API_URL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"application/x-www-form-urlencoded;charset=UTF-8"},body});
+    if(status)status.textContent="Comment sent successfully to Oral English Academy. Thank you for your feedback.";
+    if(commentEl)commentEl.value="";
+    setTimeout(()=>{loadPublicComments();loadHomePublicComments();},500);
+  }catch(e){if(status)status.textContent="Could not send the comment. Please try again.";}
 }
 
 async function loadPublicComments(){
