@@ -2416,16 +2416,35 @@ function closeBankTransferModal(){
 }
 function confirmBankTransfer(){
   const modal=document.getElementById("bankTransferModal");
-  if(!modal)return;
-  const record={id:"BT-"+Date.now(),email:currentAccountEmail(),candidateName:localStorage.getItem("oralEnglishCandidateName")||"",type:modal.dataset.type,key:modal.dataset.key,packageName:modal.dataset.name,amount:modal.dataset.price,status:"pending",submittedAt:new Date().toISOString()};
-  const list=JSON.parse(localStorage.getItem("oralEnglishPendingBankTransfers")||"[]");
-  list.push(record); localStorage.setItem("oralEnglishPendingBankTransfers",JSON.stringify(list));
-  if(PAYMENT_API_URL && !PAYMENT_API_URL.includes("PASTE_YOUR_")){
-    fetch(PAYMENT_API_URL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action:"submitPayment",payment:record})}).catch(()=>{});
-  }
-  closeBankTransferModal();
-  refreshStudentPaymentStatus();
-  alert("Transfer confirmation submitted. Your payment is now PENDING. You will receive an approval or rejection email after verification.");
+  const evidenceInput=document.getElementById("paymentEvidence");
+  if(!modal || !evidenceInput)return;
+  const file=evidenceInput.files && evidenceInput.files[0];
+  if(!file){alert("Please upload evidence of payment before submitting your transfer confirmation.");return;}
+  if(file.size > 5*1024*1024){alert("The payment evidence file is too large. Please choose a file no larger than 5 MB.");return;}
+  if(!currentAccountEmail()){alert("Please sign in or create an account before making a payment.");return;}
+
+  const reader=new FileReader();
+  reader.onload=function(){
+    const result=String(reader.result||"");
+    const comma=result.indexOf(",");
+    if(comma<0){alert("Could not read the payment evidence. Please choose the file again.");return;}
+    const base64=result.slice(comma+1);
+    const record={id:"BT-"+Date.now(),email:currentAccountEmail(),candidateName:localStorage.getItem("oralEnglishCandidateName")||"",type:modal.dataset.type,key:modal.dataset.key,packageName:modal.dataset.name,amount:modal.dataset.price,status:"pending",submittedAt:new Date().toISOString(),evidenceName:file.name};
+    const list=JSON.parse(localStorage.getItem("oralEnglishPendingBankTransfers")||"[]");
+    list.push(record); localStorage.setItem("oralEnglishPendingBankTransfers",JSON.stringify(list));
+
+    if(PAYMENT_API_URL && !PAYMENT_API_URL.includes("PASTE_YOUR_")){
+      const paymentPayload={action:"submitPayment",payment:Object.assign({},record,{evidence:{name:file.name,mimeType:file.type||"application/octet-stream",base64:base64}})};
+      fetch(PAYMENT_API_URL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(paymentPayload)}).catch(()=>{});
+    }
+
+    evidenceInput.value="";
+    closeBankTransferModal();
+    refreshStudentPaymentStatus();
+    alert("Payment evidence submitted successfully. Your payment is now PENDING verification. You will receive an email after the transfer is checked. Please do not pay again while it is pending.");
+  };
+  reader.onerror=function(){alert("Could not read the payment evidence. Please choose the file again.");};
+  reader.readAsDataURL(file);
 }
 
 async function submitContactMessage(event){
@@ -2616,7 +2635,10 @@ document.addEventListener("DOMContentLoaded",()=>{ renderLessons(); openLesson(0
       <div><span>Account Name</span><strong>DESTINY OMOKHIOMION AILOKPEDE</strong></div>
       <div><span>Account Number</span><strong>7069929746</strong></div>
     </div>
-    <p class="muted">Transfer the exact amount to the account above. After payment, keep your transfer reference. Your package will be unlocked after manual verification.</p>
+    <p class="muted">Transfer the exact amount to the account above. After payment, take a screenshot of the successful transfer showing the amount, date/time, and transaction/reference details.</p>
+    <label style="display:block;margin:18px 0 8px;font-weight:700">Payment evidence <span style="color:#dc2626">*</span></label>
+    <input id="paymentEvidence" type="file" accept="image/*,.pdf" style="width:100%;padding:12px;border:2px solid #ddd;border-radius:8px;background:#fff">
+    <small class="muted" style="display:block;margin-top:8px">Upload a screenshot/photo or PDF of your successful transfer. Maximum file size: 5 MB.</small>
     <button type="button" class="primary full" onclick="confirmBankTransfer()">I Have Made the Transfer</button>
     <button type="button" class="full" onclick="closeBankTransferModal()">Cancel</button>
   </div>
