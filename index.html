@@ -685,6 +685,11 @@ body{
         </div>
         <br>
         <button class="primary" onclick="startTest()">Start Test →</button>
+        <div style="margin-top:22px;padding-top:18px;border-top:1px solid var(--line)">
+          <h3 style="margin:0 0 6px">Account settings</h3>
+          <p class="account-note">You can permanently remove this account from this browser.</p>
+          <button class="back-btn" type="button" onclick="deleteAccount()" style="margin-top:10px;border-color:#dc2626;color:#dc2626">Delete Account</button>
+        </div>
       </div>
 
       <div id="accountForms">
@@ -1559,6 +1564,55 @@ function logoutAccount(){
   document.getElementById('loginPassword').value="";
   loadSavedAccount(); refreshHomeAccount();
 }
+
+function deleteAccount(){
+  const email=currentAccountEmail();
+  if(!email){
+    alert("Please sign in before deleting an account.");
+    return;
+  }
+
+  const accounts=JSON.parse(localStorage.getItem('oralEnglishAccounts')||'{}');
+  const account=accounts[email];
+  if(!account){
+    localStorage.removeItem('oralEnglishCurrentUser');
+    loadSavedAccount();
+    refreshHomeAccount();
+    return;
+  }
+
+  const confirmed=confirm(
+    "Delete your Oral English Academy account?\n\n" +
+    "This will remove the account and its locally stored login information from this browser.\n\n" +
+    "This action cannot be undone."
+  );
+
+  if(!confirmed) return;
+
+  delete accounts[email];
+  localStorage.setItem('oralEnglishAccounts',JSON.stringify(accounts));
+  localStorage.removeItem('oralEnglishCurrentUser');
+
+  // Remove this candidate's locally stored records from this browser.
+  try{
+    const performance=JSON.parse(localStorage.getItem('oralEnglishPerformance')||'[]');
+    localStorage.setItem('oralEnglishPerformance',JSON.stringify(performance.filter(r=>String(r.email||'').toLowerCase()!==email.toLowerCase())));
+  }catch(e){}
+  try{
+    const payments=JSON.parse(localStorage.getItem('oralEnglishPendingBankTransfers')||'[]');
+    localStorage.setItem('oralEnglishPendingBankTransfers',JSON.stringify(payments.filter(r=>String(r.email||'').toLowerCase()!==email.toLowerCase())));
+  }catch(e){}
+
+  candidateName="";
+  candidateEmail="";
+  document.getElementById('registerPassword').value="";
+  document.getElementById('registerPassword2').value="";
+  document.getElementById('loginPassword').value="";
+  alert("Your account has been deleted from this browser.");
+  loadSavedAccount();
+  refreshHomeAccount();
+  showPage('homePage');
+}
 function seededShuffle(arr,seed){
   const a=[...arr]; let s=seed;
   for(let i=a.length-1;i>0;i--){s=(s*9301+49297)%233280;const j=Math.floor((s/233280)*(i+1));[a[i],a[j]]=[a[j],a[i]]}
@@ -2400,10 +2454,14 @@ async function submitComment(event){
   status.style.display="block"; status.textContent="Posting…";
   if(PAYMENT_API_URL.includes("PASTE_YOUR_")){ status.textContent="Please connect the academy backend before posting comments."; return; }
   try{
-    const r=await fetch(PAYMENT_API_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action:"submitComment",name,email,comment})});
-    const data=await r.json();
-    status.textContent=data.ok?"Comment posted. Thank you for your feedback.":(data.error||"Could not post the comment.");
-    if(data.ok){commentEl.value="";loadPublicComments();loadHomePublicComments();}
+    // Apps Script web apps can return a cross-origin response that the browser
+    // does not allow the GitHub Pages site to read. no-cors still sends the
+    // POST to the backend, so the comment can be stored and emailed.
+    await fetch(PAYMENT_API_URL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action:"submitComment",name,email,comment})});
+    status.textContent="Comment submitted successfully. Thank you for your feedback.";
+    commentEl.value="";
+    loadPublicComments();
+    loadHomePublicComments();
   }catch(e){status.textContent="Could not connect to the academy service.";}
 }
 
