@@ -1468,8 +1468,9 @@ async function registerAccount(){
   accounts[email]={name,email,passwordHash:await hashPassword(password)};
   localStorage.setItem('oralEnglishAccounts',JSON.stringify(accounts));
   localStorage.setItem('oralEnglishCurrentUser',email);
+  localStorage.setItem('oralEnglishCandidateName',name);
   candidateName=name; candidateEmail=email;
-  loadSavedAccount(); refreshHomeAccount(); syncApprovedPackages();
+  loadSavedAccount(); refreshHomeAccount(); syncApprovedPackages(); refreshStudentPaymentStatus();
 }
 async function loginAccount(){
   const email=document.getElementById('loginEmail').value.trim().toLowerCase();
@@ -1481,8 +1482,9 @@ async function loginAccount(){
   const passwordHash=await hashPassword(password);
   if(accounts[email].passwordHash!==passwordHash){err.textContent="Incorrect email or password.";return}
   localStorage.setItem('oralEnglishCurrentUser',email);
+  localStorage.setItem('oralEnglishCandidateName',accounts[email].name);
   candidateName=accounts[email].name; candidateEmail=accounts[email].email;
-  loadSavedAccount(); refreshHomeAccount();
+  loadSavedAccount(); refreshHomeAccount(); syncApprovedPackages(); refreshStudentPaymentStatus();
 }
 function showForgotPassword(){
   showAccountForm('login');
@@ -1549,6 +1551,8 @@ function loadSavedAccount(){
   const forms=document.getElementById('accountForms');
   if(account){
     candidateName=account.name; candidateEmail=account.email;
+    localStorage.setItem("oralEnglishCandidateName",account.name);
+    selectedLessonPackage=localStorage.getItem(userStorageKey("lessonPackage"))||"preview";
     document.getElementById('loggedInName').textContent=account.name;
     document.getElementById('loggedInEmail').textContent=account.email;
     logged.style.display='block'; forms.style.display='none';
@@ -1558,7 +1562,9 @@ function loadSavedAccount(){
 }
 function logoutAccount(){
   localStorage.removeItem('oralEnglishCurrentUser');
+  localStorage.removeItem('oralEnglishCandidateName');
   candidateName=""; candidateEmail="";
+  selectedLessonPackage="preview";
   document.getElementById('registerPassword').value="";
   document.getElementById('registerPassword2').value="";
   document.getElementById('loginPassword').value="";
@@ -1592,6 +1598,7 @@ function deleteAccount(){
   delete accounts[email];
   localStorage.setItem('oralEnglishAccounts',JSON.stringify(accounts));
   localStorage.removeItem('oralEnglishCurrentUser');
+  localStorage.removeItem('oralEnglishCandidateName');
 
   // Remove this candidate's locally stored records from this browser.
   try{
@@ -1995,9 +2002,9 @@ function startTopicQuiz(area){
       });
       try{ recordPerformance(score,quizAreas,"topic_quiz",selected.length); }catch(e){ console.warn("Topic quiz performance record failed:",e); }
       try{
-        const history=JSON.parse(localStorage.getItem("oralEnglishTopicQuizHistory")||"[]");
+        const history=readJson(userStorageKey("oralEnglishTopicQuizHistory"),[]);
         history.push({topic:area,topicIndex:lessonIndex,score,total:selected.length,percentage:pct,timestamp:new Date().toISOString()});
-        localStorage.setItem("oralEnglishTopicQuizHistory",JSON.stringify(history.slice(-200)));
+        writeJson(userStorageKey("oralEnglishTopicQuizHistory"),history.slice(-200));
       }catch(e){}
       box.innerHTML=`
         <div class="topic-quiz-card topic-quiz-result">
@@ -2065,16 +2072,16 @@ const dailyStudyPlans = {
 };
 
 function getStudyPackage(){
-  return localStorage.getItem("lessonPackage") || "preview";
+  return localStorage.getItem(userStorageKey("lessonPackage")) || "preview";
 }
 
 function getPlanForToday(){
   const pkg=getStudyPackage();
   const plan=dailyStudyPlans[pkg] || dailyStudyPlans.preview;
-  let start=localStorage.getItem("oralEnglishPackageStartDate");
+  let start=localStorage.getItem(userStorageKey("oralEnglishPackageStartDate"));
   if(!/^\d{4}-\d{2}-\d{2}$/.test(start)){
     start=new Date().toISOString().slice(0,10);
-    localStorage.setItem("oralEnglishPackageStartDate",start);
+    localStorage.setItem(userStorageKey("oralEnglishPackageStartDate"),start);
   }
   const startMs=new Date(start+"T00:00:00").getTime();
   const todayMs=new Date(new Date().toISOString().slice(0,10)+"T00:00:00").getTime();
@@ -2084,8 +2091,8 @@ function getPlanForToday(){
 }
 
 function getStudiedTopicIndexes(){
-  const reviewed=JSON.parse(localStorage.getItem("oralEnglishStudyGuideReviewed")||"[]");
-  const quizDone=JSON.parse(localStorage.getItem("oralEnglishTopicQuizHistory")||"[]");
+  const reviewed=readJson(userStorageKey("oralEnglishStudyGuideReviewed"),[]);
+  const quizDone=readJson(userStorageKey("oralEnglishTopicQuizHistory"),[]);
   const indexes=new Set(reviewed);
   if(Array.isArray(quizDone)) quizDone.forEach(x=>{
     if(typeof x==="number") indexes.add(x);
@@ -2261,7 +2268,7 @@ function submitDailyStudyTest(){
     </div>`;
 }
 
-let studyGuideReviewed = JSON.parse(localStorage.getItem("oralEnglishStudyGuideReviewed") || "[]");
+let studyGuideReviewed = readJson(userStorageKey("oralEnglishStudyGuideReviewed"),[]);
 
 function openStudyGuide(){
   showPage("studyGuidePage");
@@ -2306,7 +2313,7 @@ function focusStudyTopic(i){
 function markStudyTopic(i){
   if(studyGuideReviewed.includes(i)) studyGuideReviewed=studyGuideReviewed.filter(x=>x!==i);
   else studyGuideReviewed.push(i);
-  localStorage.setItem("oralEnglishStudyGuideReviewed",JSON.stringify(studyGuideReviewed));
+  writeJson(userStorageKey("oralEnglishStudyGuideReviewed"),studyGuideReviewed);
   renderStudyGuide();
   focusStudyTopic(i);
 }
@@ -2321,25 +2328,34 @@ function updateStudyGuideProgress(){
 /* ===================== DIRECT BANK TRANSFER ===================== */
 const BANK_TRANSFER_DETAILS = {bank:"Opay",accountName:"DESTINY OMOKHIOMION AILOKPEDE",accountNumber:"7069929746"};
 
-function currentAccountEmail(){ return localStorage.getItem("oralEnglishCurrentUser") || ""; }
+function currentAccountEmail(){ return (localStorage.getItem("oralEnglishCurrentUser") || "").trim().toLowerCase(); }
+function userStorageKey(base){
+  const email=currentAccountEmail();
+  return email ? base+"::"+email : base+"::guest";
+}
+function readJson(key,fallback){try{return JSON.parse(localStorage.getItem(key)||JSON.stringify(fallback));}catch(e){return fallback;}}
+function writeJson(key,value){localStorage.setItem(key,JSON.stringify(value));}
+function getPaidPackageStore(){return readJson(userStorageKey("oralEnglishPaidPackages"),{});}
 function hasPaidPackage(type,key){
-  try{ const data=JSON.parse(localStorage.getItem("oralEnglishPaidPackages")||"{}"); return !!(data[type] && data[type][key]); }catch(e){ return false; }
+  const data=getPaidPackageStore();
+  return !!(data[type] && data[type][key]);
 }
 function grantPaidPackage(type,key){
-  let data={}; try{data=JSON.parse(localStorage.getItem("oralEnglishPaidPackages")||"{}");}catch(e){}
-  if(!data[type]) data[type]={}; data[type][key]={paidAt:new Date().toISOString()};
-  localStorage.setItem("oralEnglishPaidPackages",JSON.stringify(data));
+  const data=getPaidPackageStore();
+  if(!data[type]) data[type]={};
+  data[type][key]={paidAt:new Date().toISOString()};
+  writeJson(userStorageKey("oralEnglishPaidPackages"),data);
 }
+
 async function syncApprovedPackages(){
   const email=currentAccountEmail();
   if(!email || !PAYMENT_API_URL || PAYMENT_API_URL.includes("PASTE_YOUR_")) return;
   try{
-    const response=await fetch(PAYMENT_API_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action:"getApproved",email})});
-    const data=await response.json();
-    if(data.ok && Array.isArray(data.approved)){
-      data.approved.forEach(p=>{ if(p.type && p.key) grantPaidPackage(p.type,p.key); });
+    const data=await callJsonp("getApproved",{email});
+    if(data && data.ok && Array.isArray(data.approved)){
+      data.approved.forEach(function(p){if(p.type&&p.key)grantPaidPackage(p.type,p.key);});
     }
-  }catch(e){ console.warn("Could not sync approved packages:",e); }
+  }catch(e){console.warn("Could not sync approved packages:",e);}
 }
 
 async function refreshStudentPaymentStatus(){
@@ -2347,53 +2363,41 @@ async function refreshStudentPaymentStatus(){
   const box=document.getElementById("studentPaymentStatus");
   const list=document.getElementById("studentPaymentStatusList");
   if(!box||!list) return;
-  if(!email){ box.style.display="none"; return; }
+  if(!email){box.style.display="none";return;}
   box.style.display="block";
-  list.innerHTML='<div class="notice">Checking your payment status…</div>';
+  list.innerHTML='<tr><td colspan="4" style="padding:18px;text-align:center" class="performance-empty">Checking your payment status…</td></tr>';
   let local=[];
-  try{ local=JSON.parse(localStorage.getItem("oralEnglishPendingBankTransfers")||"[]").filter(p=>String(p.email||"").toLowerCase()===email.toLowerCase()); }catch(e){ local=[]; }
+  try{local=JSON.parse(localStorage.getItem(userStorageKey("oralEnglishPendingBankTransfers"))||"[]").filter(function(p){return String(p.email||"").toLowerCase()===email.toLowerCase();});}catch(e){local=[];}
   let online=[];
-  if(PAYMENT_API_URL && !PAYMENT_API_URL.includes("PASTE_YOUR_")){
-    try{
-      const response=await fetch(PAYMENT_API_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action:"getPaymentStatus",email})});
-      const data=await response.json();
-      if(data.ok && Array.isArray(data.payments)) online=data.payments;
-    }catch(e){ console.warn("Could not check payment status:",e); }
-  }
-  // The online Payments sheet is the source of truth. This means a payment
-  // remains PENDING, APPROVED, or REJECTED after the candidate leaves the
-  // website and returns later. Local storage is only a fallback when the
-  // online service cannot be reached.
+  try{
+    if(PAYMENT_API_URL && !PAYMENT_API_URL.includes("PASTE_YOUR_")){
+      const data=await callJsonp("getPaymentStatus",{email});
+      if(data && data.ok && Array.isArray(data.payments)) online=data.payments;
+    }
+  }catch(e){console.warn("Could not check payment status:",e);}
+
   let payments=[];
   if(online.length){
     payments=online;
-    // Keep the latest online status locally too, so the status survives a
-    // temporary connection problem on the same device.
     try{
-      const saved=JSON.parse(localStorage.getItem("oralEnglishPendingBankTransfers")||"[]");
-      const onlineById={};
-      online.forEach(p=>onlineById[p.id]=p);
-      const merged=saved.map(p=>onlineById[p.id]||p);
-      online.forEach(p=>{ if(!merged.some(x=>x.id===p.id)) merged.push(p); });
-      localStorage.setItem("oralEnglishPendingBankTransfers",JSON.stringify(merged));
+      const saved=JSON.parse(localStorage.getItem(userStorageKey("oralEnglishPendingBankTransfers"))||"[]");
+      const byId={}; online.forEach(function(p){byId[p.id]=p;});
+      const merged=saved.map(function(p){return byId[p.id]||p;});
+      online.forEach(function(p){if(!merged.some(function(x){return x.id===p.id;}))merged.push(p);});
+      localStorage.setItem(userStorageKey("oralEnglishPendingBankTransfers"),JSON.stringify(merged));
     }catch(e){}
   }else{
     payments=local;
   }
-  payments=payments.sort((a,b)=>new Date(b.submittedAt||0)-new Date(a.submittedAt||0));
-  if(!payments.length){ list.innerHTML='<tr><td colspan="4" style="padding:18px;text-align:center" class="performance-empty">No payment confirmations have been submitted yet.</td></tr>'; return; }
-  list.innerHTML=payments.map(p=>{
+  payments=payments.slice().sort(function(a,b){return new Date(b.submittedAt||0)-new Date(a.submittedAt||0);});
+  if(!payments.length){list.innerHTML='<tr><td colspan="4" style="padding:18px;text-align:center" class="performance-empty">No payment confirmations have been submitted yet.</td></tr>';return;}
+  list.innerHTML=payments.map(function(p){
     const status=String(p.status||"pending").toLowerCase();
     const label=status==="approved"?"APPROVED":status==="rejected"?"REJECTED":"PENDING";
     const cls=status==="approved"?"pass":status==="rejected"?"fail":"muted";
     const date=p.submittedAt?new Date(p.submittedAt).toLocaleString():"";
     const notice=status==="pending"?"Your payment is awaiting verification. You do not need to pay again.":status==="approved"?"Payment verified — your package is now unlocked.":"Payment was not approved. Please contact the Academy for assistance.";
-    return `<tr>
-      <td style="padding:14px;border-bottom:1px solid var(--line)"><strong>${String(p.packageName||"Package")}</strong><br><small class="muted">Submitted ${date}</small></td>
-      <td style="padding:14px;border-bottom:1px solid var(--line)"><strong>${String(p.amount||"—")}</strong></td>
-      <td style="padding:14px;border-bottom:1px solid var(--line)"><strong class="${cls}">${label}</strong></td>
-      <td style="padding:14px;border-bottom:1px solid var(--line)" class="${cls}">${notice}</td>
-    </tr>`;
+    return '<tr><td style="padding:14px;border-bottom:1px solid var(--line)"><strong>'+escapeHtml(p.packageName||"Package")+'</strong><br><small class="muted">Submitted '+escapeHtml(date)+'</small></td><td style="padding:14px;border-bottom:1px solid var(--line)"><strong>'+escapeHtml(p.amount||"—")+'</strong></td><td style="padding:14px;border-bottom:1px solid var(--line)"><strong class="'+cls+'">'+label+'</strong></td><td style="padding:14px;border-bottom:1px solid var(--line)" class="'+cls+'">'+notice+'</td></tr>';
   }).join("");
 }
 
@@ -2422,8 +2426,8 @@ function confirmBankTransfer(){
   if(!file){alert("Please upload your payment evidence before submitting the transfer confirmation.");return;}
   const allowed=["image/jpeg","image/png","image/webp","application/pdf"];
   if(!allowed.includes(file.type)){alert("Please upload a JPG, PNG, WEBP image or PDF payment receipt.");return;}
-  if(file.size>5*1024*1024){alert("Payment evidence must be 2 MB or smaller.");return;}
-  const record={id:"BT-"+Date.now(),email:currentAccountEmail(),candidateName:localStorage.getItem("oralEnglishCandidateName")||"",type:modal.dataset.type,key:modal.dataset.key,packageName:modal.dataset.name,amount:modal.dataset.price,status:"pending",submittedAt:new Date().toISOString(),evidenceName:file.name,evidenceType:file.type};
+  if(file.size>5*1024*1024){alert("Payment evidence must be 5 MB or smaller.");return;}
+  const record={id:"BT-"+Date.now(),email:currentAccountEmail(),candidateName:(candidateName||localStorage.getItem("oralEnglishCandidateName")||""),type:modal.dataset.type,key:modal.dataset.key,packageName:modal.dataset.name,amount:modal.dataset.price,status:"pending",submittedAt:new Date().toISOString(),evidenceName:file.name,evidenceType:file.type};
   const reader=new FileReader();
   const button=document.getElementById("confirmBankTransferButton");
   if(button){button.disabled=true;button.textContent="Uploading evidence…";}
@@ -2431,15 +2435,29 @@ function confirmBankTransfer(){
     try{
       const dataUrl=String(reader.result||"");
       record.evidence={name:file.name,mimeType:file.type,base64:dataUrl.split(",")[1]||""};
-      const list=JSON.parse(localStorage.getItem("oralEnglishPendingBankTransfers")||"[]");
+      const list=JSON.parse(localStorage.getItem(userStorageKey("oralEnglishPendingBankTransfers"))||"[]");
       list.push({id:record.id,email:record.email,candidateName:record.candidateName,type:record.type,key:record.key,packageName:record.packageName,amount:record.amount,status:"pending",submittedAt:record.submittedAt,evidenceName:record.evidenceName,evidenceType:record.evidenceType});
-      localStorage.setItem("oralEnglishPendingBankTransfers",JSON.stringify(list));
+      localStorage.setItem(userStorageKey("oralEnglishPendingBankTransfers"),JSON.stringify(list));
       if(!PAYMENT_API_URL || PAYMENT_API_URL.includes("PASTE_YOUR_")) throw new Error("Backend not connected");
       const body=new URLSearchParams({action:"submitPayment",payment:JSON.stringify(record)}).toString();
       await fetch(PAYMENT_API_URL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"application/x-www-form-urlencoded;charset=UTF-8"},body});
+      // no-cors responses are intentionally unreadable in the browser. Verify that the
+      // backend actually stored the payment by querying the read-only JSONP endpoint.
+      let confirmed=false;
+      for(let attempt=0;attempt<3 && !confirmed;attempt++){
+        await new Promise(function(resolve){setTimeout(resolve,700);});
+        try{
+          const check=await callJsonp("getPaymentStatus",{email:record.email},10000);
+          confirmed=!!(check&&check.ok&&Array.isArray(check.payments)&&check.payments.some(function(p){return String(p.id)===String(record.id);}));
+        }catch(e){}
+      }
       closeBankTransferModal();
-      refreshStudentPaymentStatus();
-      alert("Transfer confirmation and payment evidence submitted. Your payment is now PENDING. You will receive an email after verification.");
+      await refreshStudentPaymentStatus();
+      if(confirmed){
+        alert("Transfer confirmation and payment evidence were received. Your payment is now PENDING. The Academy will verify the transfer and email you the result.");
+      }else{
+        alert("The transfer confirmation was sent, but the website could not confirm the backend response yet. Refresh Payment Status shortly. Do not submit the same payment again unless it does not appear there.");
+      }
     }catch(e){
       if(button){button.disabled=false;button.textContent="I Have Made the Transfer";}
       alert("The payment evidence could not be submitted. Please check your internet connection and try again.");
@@ -2459,13 +2477,16 @@ async function submitContactMessage(event){
   const name=localStorage.getItem("oralEnglishCandidateName")||"Guest";
   const status=document.getElementById("contactStatus");
   status.style.display="block"; status.textContent="Sending…";
-  if(PAYMENT_API_URL.includes("PASTE_YOUR_")){ status.textContent="Please connect the academy backend before sending messages."; return; }
+  const submitButton=event.target.querySelector('button[type="submit"]');
+  if(submitButton)submitButton.disabled=true;
+  if(PAYMENT_API_URL.includes("PASTE_YOUR_")){ status.textContent="Please connect the academy backend before sending messages."; if(submitButton)submitButton.disabled=false; return; }
   try{
     const body=new URLSearchParams({action:"contactMessage",name,email,subject,message}).toString();
     await fetch(PAYMENT_API_URL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"application/x-www-form-urlencoded;charset=UTF-8"},body});
     status.textContent="Message sent successfully to Oral English Academy.";
     subjectEl.value="";messageEl.value="";
-  }catch(e){status.textContent="Could not send the message. Please try again.";}
+    if(submitButton)submitButton.disabled=false;
+  }catch(e){status.textContent="Could not send the message. Please try again.";if(submitButton)submitButton.disabled=false;}
 }
 
 async function submitComment(event){
@@ -2477,9 +2498,11 @@ async function submitComment(event){
   const name=localStorage.getItem("oralEnglishCandidateName")||"Guest";
   const statusId=form && form.closest(".contact-card") ? (form.closest(".contact-card").querySelector(".notice")?.id || "commentStatus") : "commentStatus";
   const status=document.getElementById(statusId) || document.getElementById("commentStatus") || document.getElementById("homeCommentStatus");
+  const submitButton=form ? form.querySelector('button[type="submit"]') : null;
   if(status){status.style.display="block"; status.textContent="Posting…";}
+  if(submitButton){submitButton.disabled=true;}
   if(!comment){if(status)status.textContent="Please enter a comment before posting.";return;}
-  if(PAYMENT_API_URL.includes("PASTE_YOUR_")){ if(status)status.textContent="Please connect the academy backend before posting comments."; return; }
+  if(PAYMENT_API_URL.includes("PASTE_YOUR_")){ if(status)status.textContent="Please connect the academy backend before posting comments."; if(submitButton)submitButton.disabled=false; return; }
   try{
     const body=new URLSearchParams({action:"submitComment",name,email,comment}).toString();
     await fetch(PAYMENT_API_URL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"application/x-www-form-urlencoded;charset=UTF-8"},body});
@@ -2491,20 +2514,22 @@ async function submitComment(event){
 
 async function loadPublicComments(){
   const box=document.getElementById("publicComments"); if(!box || PAYMENT_API_URL.includes("PASTE_YOUR_")) return;
-  try{const r=await fetch(PAYMENT_API_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action:"listComments"})}); const data=await r.json();
-    if(!data.ok){box.innerHTML="";return;}
-    box.innerHTML=data.comments.slice(0,20).map(c=>`<div class="comment-item"><strong>${escapeHtml(c.name||"Student")}</strong><br><small>${c.createdAt?new Date(c.createdAt).toLocaleString():""}</small><p style="margin-bottom:0;line-height:1.6">${escapeHtml(c.comment||"")}</p></div>`).join("");
+  try{
+    const data=await callJsonp("listComments",{});
+    if(!data || !data.ok){box.innerHTML="";return;}
+    box.innerHTML=(data.comments||[]).slice(0,20).map(function(c){return '<div class="comment-item"><strong>'+escapeHtml(c.name||"Student")+'</strong><br><small>'+escapeHtml(c.createdAt?new Date(c.createdAt).toLocaleString():"")+'</small><p style="margin-bottom:0;line-height:1.6">'+escapeHtml(c.comment||"")+'</p></div>';}).join("");
     const homeBox=document.getElementById("homePublicComments");
     if(homeBox) homeBox.innerHTML=box.innerHTML;
-  }catch(e){}
+  }catch(e){console.warn("Could not load comments:",e);}
 }
 function escapeHtml(value){return String(value).replace(/[&<>\"]/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[m]));}
 async function loadHomePublicComments(){
   const homeBox=document.getElementById("homePublicComments");
   if(!homeBox || PAYMENT_API_URL.includes("PASTE_YOUR_")) return;
-  try{const r=await fetch(PAYMENT_API_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action:"listComments"})}); const data=await r.json();
-    if(data.ok) homeBox.innerHTML=data.comments.slice(0,20).map(c=>`<div class="comment-item"><strong>${escapeHtml(c.name||"Student")}</strong><br><small>${c.createdAt?new Date(c.createdAt).toLocaleString():""}</small><p style="margin-bottom:0;line-height:1.6">${escapeHtml(c.comment||"")}</p></div>`).join("");
-  }catch(e){}
+  try{
+    const data=await callJsonp("listComments",{});
+    if(data && data.ok) homeBox.innerHTML=(data.comments||[]).slice(0,20).map(function(c){return '<div class="comment-item"><strong>'+escapeHtml(c.name||"Student")+'</strong><br><small>'+escapeHtml(c.createdAt?new Date(c.createdAt).toLocaleString():"")+'</small><p style="margin-bottom:0;line-height:1.6">'+escapeHtml(c.comment||"")+'</p></div>';}).join("");
+  }catch(e){console.warn("Could not load home comments:",e);}
 }
 
 function startPackagePayment(type,key){ openBankTransferModal(type,key); return false; }
@@ -2518,7 +2543,7 @@ const lessonPackages = {
   exam:{name:"Exam Master Package",price:"₦5,000",maxTopics:10}
 };
 
-let selectedLessonPackage = localStorage.getItem("lessonPackage") || "preview";
+let selectedLessonPackage = localStorage.getItem(userStorageKey("lessonPackage")) || "preview";
 
 function lessonUnlocked(index){
   const pkg = lessonPackages[selectedLessonPackage] || lessonPackages.preview;
@@ -2529,8 +2554,8 @@ function lessonUnlocked(index){
 async function selectLessonPackage(key){
   if(key === "preview"){
     selectedLessonPackage = key;
-    localStorage.setItem("lessonPackage", key);
-    localStorage.setItem("oralEnglishPackageStartDate", new Date().toISOString().slice(0,10));
+    localStorage.setItem(userStorageKey("lessonPackage"), key);
+    localStorage.setItem(userStorageKey("oralEnglishPackageStartDate"), new Date().toISOString().slice(0,10));
     showPage("learnPage");
     openLesson(0);
     return;
@@ -2542,8 +2567,8 @@ async function selectLessonPackage(key){
       return;
     }
     selectedLessonPackage = key;
-    localStorage.setItem("lessonPackage", key);
-    localStorage.setItem("oralEnglishPackageStartDate", new Date().toISOString().slice(0,10));
+    localStorage.setItem(userStorageKey("lessonPackage"), key);
+    localStorage.setItem(userStorageKey("oralEnglishPackageStartDate"), new Date().toISOString().slice(0,10));
     showPage("learnPage");
     openLesson(0);
   }catch(e){ alert(e.message||"Unable to start payment."); }
